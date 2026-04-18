@@ -99,8 +99,13 @@ async function main() {
     },
     onFullscreen: () => {
       const el = document.documentElement;
-      if (!document.fullscreenElement) el.requestFullscreen?.();
-      else document.exitFullscreen?.();
+      try {
+        if (!document.fullscreenElement) {
+          el.requestFullscreen?.().catch(() => {});
+        } else {
+          document.exitFullscreen?.().catch(() => {});
+        }
+      } catch (_) { /* browser refused — ignore */ }
     },
     audioAvailable,
   });

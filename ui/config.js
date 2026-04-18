@@ -17,12 +17,16 @@ export function mountOverlay(root, { onSelectionChange, onMute, onFullscreen, au
   root.appendChild(pill);
 
   // Always-visible fullscreen button in the top-right corner.
+  // Hidden on devices that don't support the fullscreen API (notably iOS Safari,
+  // which restricts fullscreen to <video> elements only).
+  const FS_AVAILABLE = !!document.fullscreenEnabled;
   const fsCornerBtn = document.createElement('button');
   fsCornerBtn.className = 'cfg-fs-corner';
   fsCornerBtn.textContent = '⛶';
   fsCornerBtn.title = 'fullscreen';
   fsCornerBtn.setAttribute('aria-label', 'toggle fullscreen');
   fsCornerBtn.addEventListener('click', () => onFullscreen?.());
+  if (!FS_AVAILABLE) fsCornerBtn.style.display = 'none';
   root.appendChild(fsCornerBtn);
 
   const drawer = document.createElement('div');
@@ -122,6 +126,7 @@ export function mountOverlay(root, { onSelectionChange, onMute, onFullscreen, au
   fsBtn.textContent = '⛶';
   fsBtn.title = 'fullscreen';
   fsBtn.addEventListener('click', () => onFullscreen?.());
+  if (!FS_AVAILABLE) fsBtn.style.display = 'none';
   footer.appendChild(fsBtn);
 
   drawer.appendChild(footer);
