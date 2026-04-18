@@ -50,34 +50,52 @@ export async function loadAllPieces() {
 }
 
 // Given a face list and a selection array of piece IDs, assign each face a ShaderMaterial
-// using one of the selected pieces. Uses a shuffled pool so pieces repeat evenly and
-// consecutive faces rarely share an id.
+// using one of the selected pieces. Spatially aware — avoids reusing the same piece on
+// any face that's adjacent (within ADJ_DIST of the same-surface orientation) to an already-
+// assigned face.
+//
+// How it works:
+//   1. Reset assignedId on all faces (live retexture path).
+//   2. Iterate faces in random order so coverage isn't biased by grid order.
+//   3. For each face, look at already-assigned faces nearby (within ADJ_DIST and with a
+//      normal that's similarly oriented — dot > 0.5), collect their ids into a "forbidden"
+//      set, and pick from the remaining selection ids. If none remain (which happens when
+//      selection is small relative to the neighborhood), fall back to any id.
 export function assignFaceMaterials(faces, selectionIds, registry) {
   if (selectionIds.length === 0) return;
-  const pool = [...selectionIds];
-  let poolIdx = 0;
-  let lastId = null;
 
-  function nextId() {
-    if (poolIdx >= pool.length) {
-      shuffleInPlace(pool);
-      poolIdx = 0;
-      if (pool.length > 1 && pool[0] === lastId) {
-        [pool[0], pool[1]] = [pool[1], pool[0]];
-      }
+  const ADJ_DIST_SQ = 15 * 15; // slightly more than CELL (10) — catches along-corridor and diagonal floor neighbors
+
+  // Reset prior assignments so neighbor checks only see new ones.
+  for (const face of faces) face.assignedId = null;
+
+  // Process in random order for unbiased distribution.
+  const order = faces.map((_, i) => i);
+  shuffleInPlace(order);
+
+  for (const idx of order) {
+    const face = faces[idx];
+
+    // Collect ids already assigned to spatially adjacent, similarly oriented faces.
+    const forbidden = new Set();
+    for (const other of faces) {
+      if (other === face || !other.assignedId) continue;
+      const dx = face.position.x - other.position.x;
+      const dy = face.position.y - other.position.y;
+      const dz = face.position.z - other.position.z;
+      const d2 = dx * dx + dy * dy + dz * dz;
+      if (d2 > ADJ_DIST_SQ) continue;
+      const dot = face.normal.x * other.normal.x + face.normal.y * other.normal.y + face.normal.z * other.normal.z;
+      if (dot < 0.5) continue;
+      forbidden.add(other.assignedId);
     }
-    const id = pool[poolIdx++];
-    lastId = id;
-    return id;
-  }
 
-  shuffleInPlace(pool);
+    const candidates = selectionIds.filter(id => !forbidden.has(id));
+    const pool = candidates.length > 0 ? candidates : selectionIds;
+    const id = pool[Math.floor(Math.random() * pool.length)];
 
-  for (const face of faces) {
-    const id = nextId();
     const entry = registry.get(id);
     if (!entry) continue;
-    // Dispose previous material if it was a letterbox ShaderMaterial
     if (face.mesh.material && face.mesh.material.userData && face.mesh.material.userData.letterbox) {
       face.mesh.material.dispose();
     }
