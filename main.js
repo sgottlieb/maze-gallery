@@ -2,65 +2,70 @@ import * as THREE from 'three';
 import { generateMaze } from './scene/maze.js';
 import { buildWorld, CELL } from './scene/world.js';
 import { createDrift } from './scene/drift.js';
-import { createLetterboxMaterial } from './scene/letterboxMaterial.js';
+import { loadAllPieces, assignFaceMaterials } from './scene/textures.js';
+import { DEFAULT_SELECTIONS } from './scene/catalog.js';
 
-const canvas = document.getElementById('canvas');
-const loading = document.getElementById('loading');
+async function main() {
+  const canvas = document.getElementById('canvas');
+  const loading = document.getElementById('loading');
 
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-renderer.setPixelRatio(window.devicePixelRatio);
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x1a1028); // match fog color so edges fade seamlessly
-scene.fog = new THREE.FogExp2(0x1a1028, 0.035);
-const camera = new THREE.PerspectiveCamera(70, 1, 0.1, 200);
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+  renderer.setPixelRatio(window.devicePixelRatio);
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x1a1028);
+  scene.fog = new THREE.FogExp2(0x1a1028, 0.035);
+  const camera = new THREE.PerspectiveCamera(70, 1, 0.1, 200);
 
-const MAZE_COLS = 16, MAZE_ROWS = 16;
-const maze = generateMaze(MAZE_COLS, MAZE_ROWS);
+  const MAZE_COLS = 16, MAZE_ROWS = 16;
+  const maze = generateMaze(MAZE_COLS, MAZE_ROWS);
 
-const placeholder = {
-  wall: new THREE.MeshBasicMaterial({ color: 0x3a2a4a, side: THREE.DoubleSide }),
-  floor: new THREE.MeshBasicMaterial({ color: 0x1a0f22, side: THREE.DoubleSide }),
-  ceiling: new THREE.MeshBasicMaterial({ color: 0x2a1a3a, side: THREE.DoubleSide }),
-};
+  // placeholders while assets load
+  const placeholder = {
+    wall: new THREE.MeshBasicMaterial({ color: 0x3a2a4a, side: THREE.DoubleSide }),
+    floor: new THREE.MeshBasicMaterial({ color: 0x1a0f22, side: THREE.DoubleSide }),
+    ceiling: new THREE.MeshBasicMaterial({ color: 0x2a1a3a, side: THREE.DoubleSide }),
+  };
+  const world = buildWorld(maze, placeholder);
+  scene.add(world.group);
 
-const world = buildWorld(maze, placeholder);
-scene.add(world.group);
+  const ambient = new THREE.AmbientLight(0x2a2040, 0.6);
+  scene.add(ambient);
+  const camLight = new THREE.PointLight(0xffccee, 0.8, 30, 2);
+  camera.add(camLight);
+  scene.add(camera);
 
-const ambient = new THREE.AmbientLight(0x2a2040, 0.6);
-scene.add(ambient);
+  const updateDrift = createDrift(camera, maze, 0, 0);
 
-const camLight = new THREE.PointLight(0xffccee, 0.8, 30, 2);
-camera.add(camLight);
-scene.add(camera);
+  function resize() {
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  }
+  window.addEventListener('resize', resize);
+  resize();
 
-const updateDrift = createDrift(camera, maze, 0, 0);
-
-function resize() {
-  const w = canvas.clientWidth, h = canvas.clientHeight;
-  renderer.setSize(w, h, false);
-  camera.aspect = w / h;
-  camera.updateProjectionMatrix();
-}
-window.addEventListener('resize', resize);
-resize();
-
-let last = performance.now() / 1000;
-function loop(nowMs) {
-  const nowSec = nowMs / 1000;
-  const dt = Math.min(0.05, nowSec - last);
-  last = nowSec;
-  updateDrift(dt, nowSec);
-  renderer.render(scene, camera);
+  let last = performance.now() / 1000;
+  function loop(nowMs) {
+    const nowSec = nowMs / 1000;
+    const dt = Math.min(0.05, nowSec - last);
+    last = nowSec;
+    updateDrift(dt, nowSec);
+    renderer.render(scene, camera);
+    requestAnimationFrame(loop);
+  }
   requestAnimationFrame(loop);
+
+  // Load assets and apply default textures
+  const registry = await loadAllPieces();
+  assignFaceMaterials(world.wallFaces, DEFAULT_SELECTIONS.walls, registry);
+  assignFaceMaterials(world.floorFaces, DEFAULT_SELECTIONS.floor, registry);
+  assignFaceMaterials(world.ceilingFaces, DEFAULT_SELECTIONS.ceiling, registry);
+
+  loading.classList.add('hidden');
+
+  // Exposed for Task 12 wiring
+  window.__maze = { world, registry };
 }
-requestAnimationFrame(loop);
 
-loading.classList.add('hidden');
-
-// Smoke test for letterbox shader — confirms GLSL compiles.
-// Does not attach to any face yet; Task 11 wires it properly.
-(() => {
-  const testTex = new THREE.TextureLoader().load('./art/match/Match_01.jpg');
-  const _testMat = createLetterboxMaterial(testTex, 1.0);
-  _testMat.dispose();
-})();
+main();
