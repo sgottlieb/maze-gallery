@@ -1,0 +1,16 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+
+# Art originals (huge; kept locally, not shipped)
+_originals/
+
+# Brainstorming scratch
+.superpowers/
+
+# Claude local settings
+.claude/

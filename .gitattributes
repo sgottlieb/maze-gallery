@@ -1,0 +1,7 @@
+# Binary media (disable git's text diff attempts)
+*.jpg binary
+*.jpeg binary
+*.png binary
+*.webm binary
+*.mp3 binary
+*.mp4 binary
