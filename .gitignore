@@ -17,3 +17,6 @@ _originals/
 
 # Dollz source GIFs — staged for composition; final output lives in art/retro/Dollz.png
 scripts/dollz-src/
+
+# Duplicate retro texture folder (original sources live in art/retro/)
+retro-texture/
