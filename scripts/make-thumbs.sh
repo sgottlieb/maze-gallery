@@ -38,3 +38,18 @@ for file in art/animated/*.webm; do
   sips -Z 80 -s formatOptions 70 "$dest" >/dev/null
   echo "  $dest"
 done
+
+# Retro PNGs → square-cropped JPG thumbnail
+for file in art/retro/*.png; do
+  [ -e "$file" ] || continue
+  base=$(basename "$file" .png)
+  dest="$OUT/${base}.jpg"
+  cp "$file" "$dest"
+  sips -s format jpeg "$dest" >/dev/null
+  w=$(sips -g pixelWidth "$dest" | awk '/pixelWidth/ {print $2}')
+  h=$(sips -g pixelHeight "$dest" | awk '/pixelHeight/ {print $2}')
+  size=$(( w < h ? w : h ))
+  sips -c "$size" "$size" "$dest" >/dev/null
+  sips -Z 80 -s formatOptions 70 "$dest" >/dev/null
+  echo "  $dest"
+done

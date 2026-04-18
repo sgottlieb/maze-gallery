@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Retro texture generator · 3D Maze</title>
+<style>
+  body { background: #1a1028; color: #fff; font-family: system-ui, sans-serif; padding: 24px; }
+  h1 { font-size: 18px; margin: 0 0 6px; letter-spacing: 0.5px; }
+  p { color: rgba(255,255,255,0.7); font-size: 13px; line-height: 1.5; margin: 0 0 18px; max-width: 640px; }
+  code { background: rgba(255,255,255,0.08); padding: 1px 6px; border-radius: 3px; font-size: 12px; }
+  .patterns { display: flex; flex-wrap: wrap; gap: 16px; margin: 20px 0 24px; }
+  .pattern { text-align: center; }
+  .pattern canvas { display: block; width: 220px; height: 220px; image-rendering: pixelated; border: 1px solid rgba(255,255,255,0.15); border-radius: 4px; }
+  .pattern .label { margin: 8px 0 0; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,0.6); }
+  button {
+    background: #b89ad8; color: #1a1028; border: 0;
+    padding: 10px 20px; font-size: 13px; letter-spacing: 1px; text-transform: uppercase;
+    cursor: pointer; border-radius: 4px; font-weight: 600;
+  }
+  button:hover { background: #c9afe4; }
+</style>
+</head>
+<body>
+
+<h1>Retro texture generator</h1>
+<p>
+  Four procedurally-generated patterns inspired by the Windows 3D Maze screensaver.
+  Click <strong>Download all</strong> to save them as PNGs, then move them into
+  <code>art/retro/</code>. Then tell Claude you have them — it'll wire them into the catalog.
+</p>
+
+<div class="patterns" id="patterns"></div>
+
+<button id="dl">Download all</button>
+
+<script>
+const W = 512, H = 512;
+
+const PATTERNS = [
+  { name: 'Brick', fn: renderBrick },
+  { name: 'Sky', fn: renderSky },
+  { name: 'Checker', fn: renderChecker },
+  { name: 'Stars', fn: renderStars },
+];
+
+function renderBrick(ctx, w, h) {
+  // mortar background
+  ctx.fillStyle = '#8a7060';
+  ctx.fillRect(0, 0, w, h);
+  const bh = 42, bw = 110, gap = 4;
+  let rowIdx = 0;
+  for (let y = -gap; y < h + bh; y += bh + gap, rowIdx++) {
+    const offset = rowIdx % 2 === 0 ? 0 : -bw / 2;
+    for (let x = offset; x < w; x += bw + gap) {
+      // per-brick color variation (deterministic pseudo-random)
+      const v = (Math.sin((x * 0.13 + y * 0.27 + rowIdx * 1.1)) * 0.5 + 0.5);
+      const r = Math.floor(140 + v * 50);
+      const g = Math.floor(55 + v * 25);
+      const b = Math.floor(40 + v * 20);
+      ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+      ctx.fillRect(x, y, bw, bh);
+      // top highlight
+      ctx.fillStyle = 'rgba(255, 230, 200, 0.18)';
+      ctx.fillRect(x, y, bw, 3);
+      // bottom shadow
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
+      ctx.fillRect(x, y + bh - 3, bw, 3);
+      // left edge shadow
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+      ctx.fillRect(x, y, 2, bh);
+    }
+  }
+}
+
+function renderSky(ctx, w, h) {
+  const grad = ctx.createLinearGradient(0, 0, 0, h);
+  grad.addColorStop(0, '#3c82cf');
+  grad.addColorStop(0.55, '#87ceeb');
+  grad.addColorStop(1, '#dce9f5');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, w, h);
+  // puffy clouds: each cloud is a cluster of overlapping white circles
+  const clouds = [
+    { x: 90, y: 120, r: 42 },
+    { x: 270, y: 170, r: 62 },
+    { x: 420, y: 90, r: 38 },
+    { x: 160, y: 320, r: 48 },
+    { x: 400, y: 380, r: 55 },
+    { x: 80, y: 430, r: 34 },
+  ];
+  for (const c of clouds) {
+    // soft shadow underneath
+    ctx.fillStyle = 'rgba(60, 90, 140, 0.12)';
+    for (let i = -2; i <= 2; i++) {
+      ctx.beginPath();
+      ctx.arc(c.x + i * c.r * 0.45, c.y + Math.abs(i) * 3 + 4, c.r * (1 - Math.abs(i) * 0.15), 0, Math.PI * 2);
+      ctx.fill();
+    }
+    // white body
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.97)';
+    for (let i = -2; i <= 2; i++) {
+      ctx.beginPath();
+      ctx.arc(c.x + i * c.r * 0.45, c.y + Math.abs(i) * 3, c.r * (1 - Math.abs(i) * 0.15), 0, Math.PI * 2);
+      ctx.fill();
+    }
+    // subtle highlight
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+    for (let i = -1; i <= 1; i++) {
+      ctx.beginPath();
+      ctx.arc(c.x + i * c.r * 0.4 - 4, c.y - c.r * 0.2, c.r * (1 - Math.abs(i) * 0.2) * 0.4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+}
+
+function renderChecker(ctx, w, h) {
+  const size = 64;
+  for (let y = 0; y < h; y += size) {
+    for (let x = 0; x < w; x += size) {
+      const isLight = (Math.floor(x / size) + Math.floor(y / size)) % 2 === 0;
+      ctx.fillStyle = isLight ? '#ede8d5' : '#2a2028';
+      ctx.fillRect(x, y, size, size);
+    }
+  }
+  // very subtle wear/grain
+  for (let i = 0; i < 2000; i++) {
+    ctx.fillStyle = `rgba(0, 0, 0, ${Math.random() * 0.08})`;
+    ctx.fillRect(Math.random() * w, Math.random() * h, 1, 1);
+  }
+}
+
+function renderStars(ctx, w, h) {
+  // deep space gradient
+  const grad = ctx.createRadialGradient(w * 0.6, h * 0.4, 0, w / 2, h / 2, Math.max(w, h) / 1.1);
+  grad.addColorStop(0, '#1e1148');
+  grad.addColorStop(0.6, '#0a0524');
+  grad.addColorStop(1, '#02010a');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, w, h);
+  // deterministic pseudo-random stars
+  let seed = 42;
+  const rand = () => {
+    seed = (seed * 1664525 + 1013904223) >>> 0;
+    return seed / 0x100000000;
+  };
+  for (let i = 0; i < 260; i++) {
+    const x = Math.floor(rand() * w);
+    const y = Math.floor(rand() * h);
+    const roll = rand();
+    const size = roll < 0.82 ? 1 : roll < 0.96 ? 2 : 3;
+    const alpha = 0.45 + rand() * 0.55;
+    ctx.fillStyle = `rgba(255, 252, 230, ${alpha})`;
+    ctx.fillRect(x, y, size, size);
+    if (size === 3) {
+      // cross arms for bright stars
+      ctx.fillStyle = `rgba(255, 252, 230, ${alpha * 0.5})`;
+      ctx.fillRect(x - 2, y + 1, size + 4, 1);
+      ctx.fillRect(x + 1, y - 2, 1, size + 4);
+    }
+  }
+  // occasional tiny galaxy smudges
+  for (let i = 0; i < 3; i++) {
+    const cx = Math.floor(rand() * w);
+    const cy = Math.floor(rand() * h);
+    for (let j = 0; j < 40; j++) {
+      const r = rand() * 20;
+      const a = rand() * Math.PI * 2;
+      ctx.fillStyle = `rgba(200, 180, 255, ${(1 - r / 20) * 0.25})`;
+      ctx.fillRect(cx + Math.cos(a) * r, cy + Math.sin(a) * r, 1, 1);
+    }
+  }
+}
+
+// Render previews
+const container = document.getElementById('patterns');
+const canvases = [];
+for (const p of PATTERNS) {
+  const div = document.createElement('div');
+  div.className = 'pattern';
+  const canvas = document.createElement('canvas');
+  canvas.width = W;
+  canvas.height = H;
+  const ctx = canvas.getContext('2d');
+  p.fn(ctx, W, H);
+  div.appendChild(canvas);
+  const label = document.createElement('p');
+  label.className = 'label';
+  label.textContent = p.name;
+  div.appendChild(label);
+  container.appendChild(div);
+  canvases.push({ name: p.name, canvas });
+}
+
+document.getElementById('dl').addEventListener('click', async () => {
+  for (const { name, canvas } of canvases) {
+    const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${name}.png`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    await new Promise(r => setTimeout(r, 250));
+  }
+});
+</script>
+
+</body>
+</html>
