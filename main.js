@@ -64,6 +64,18 @@ async function main() {
 
   loading.classList.add('hidden');
 
+  // Optional ambient audio — HEAD probe avoids a download if missing.
+  const audioAvailable = await fetch('./audio/ambient.mp3', { method: 'HEAD' })
+    .then(r => r.ok)
+    .catch(() => false);
+
+  let audioEl = null;
+  if (audioAvailable) {
+    audioEl = new Audio('./audio/ambient.mp3');
+    audioEl.loop = true;
+    audioEl.volume = 0.5;
+  }
+
   const { mountOverlay } = await import('./ui/config.js');
   mountOverlay(document.getElementById('overlay-root'), {
     onSelectionChange: (surface, ids) => {
@@ -75,13 +87,17 @@ async function main() {
       const faces = facesBySurface[surface];
       if (faces) assignFaceMaterials(faces, ids, registry);
     },
-    onMute: (_muted) => { /* Task 14 will wire audio */ },
+    onMute: (muted) => {
+      if (!audioEl) return;
+      if (muted) audioEl.pause();
+      else audioEl.play().catch(() => {});
+    },
     onFullscreen: () => {
       const el = document.documentElement;
       if (!document.fullscreenElement) el.requestFullscreen?.();
       else document.exitFullscreen?.();
     },
-    audioAvailable: false,
+    audioAvailable,
   });
 
   // Exposed for Task 12 wiring
