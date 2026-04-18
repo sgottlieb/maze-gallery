@@ -20,13 +20,18 @@ export const PIECES = [
   { id: 'May_Her_Memory_Be_a_Blessing', series: 'Animated', type: 'video', src: './art/animated/May_Her_Memory_Be_a_Blessing.webm' },
   { id: 'Pantheons_Playground', series: 'Animated', type: 'video', src: './art/animated/Pantheons_Playground.webm' },
   { id: 'Peter_and_Wendy', series: 'Animated', type: 'video', src: './art/animated/Peter_and_Wendy.webm' },
+  // Retro — Y2K homages to the original Windows 3D Maze
+  { id: 'Brick', series: 'Retro', type: 'image', src: './art/retro/Brick.png' },
+  { id: 'Sky', series: 'Retro', type: 'image', src: './art/retro/Sky.png' },
+  { id: 'Checker', series: 'Retro', type: 'image', src: './art/retro/Checker.png' },
+  { id: 'Stars', series: 'Retro', type: 'image', src: './art/retro/Stars.png' },
 ];
 
 for (const p of PIECES) {
   p.thumbSrc = `./art/thumbs/${p.id}.jpg`;
 }
 
-export const SERIES = ['Match', 'Me', 'Mother', 'Animated'];
+export const SERIES = ['Match', 'Me', 'Mother', 'Animated', 'Retro'];
 
 export const DEFAULT_SELECTIONS = {
   walls: ['Dreamstorm', 'May_Her_Memory_Be_a_Blessing', 'Peter_and_Wendy'],
