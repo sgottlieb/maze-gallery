@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { generateMaze } from './scene/maze.js';
 import { buildWorld, CELL } from './scene/world.js';
 import { createDrift } from './scene/drift.js';
+import { createLetterboxMaterial } from './scene/letterboxMaterial.js';
 
 const canvas = document.getElementById('canvas');
 const loading = document.getElementById('loading');
@@ -55,3 +56,11 @@ function loop(nowMs) {
 requestAnimationFrame(loop);
 
 loading.classList.add('hidden');
+
+// Smoke test for letterbox shader — confirms GLSL compiles.
+// Does not attach to any face yet; Task 11 wires it properly.
+(() => {
+  const testTex = new THREE.TextureLoader().load('./art/match/Match_01.jpg');
+  const _testMat = createLetterboxMaterial(testTex, 1.0);
+  _testMat.dispose();
+})();
