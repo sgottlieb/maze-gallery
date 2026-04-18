@@ -201,83 +201,121 @@ function renderStars(ctx, w, h) {
 }
 
 function renderDollz(ctx, w, h) {
-  // Pink cotton-candy backdrop with subtle pattern
+  // Pink cotton-candy backdrop
   const grad = ctx.createLinearGradient(0, 0, 0, h);
   grad.addColorStop(0, '#ffd4ea');
   grad.addColorStop(1, '#ffa8cc');
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, w, h);
 
-  // Deterministic randomness
-  let seed = 123;
+  let seed = 321;
   const rand = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 0x100000000; };
 
-  // Scattered background hearts + sparkles
-  for (let i = 0; i < 35; i++) {
+  // Background: scattered hearts + sparkles + stars
+  for (let i = 0; i < 45; i++) {
     const x = rand() * w, y = rand() * h;
-    const alpha = 0.25 + rand() * 0.3;
-    if (rand() < 0.6) {
-      // tiny heart
+    const alpha = 0.2 + rand() * 0.3;
+    const kind = rand();
+    if (kind < 0.5) {
       ctx.fillStyle = `rgba(255, 100, 170, ${alpha})`;
       drawHeart(ctx, x, y, 3 + rand() * 3);
-    } else {
-      // sparkle
+    } else if (kind < 0.85) {
       ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
       ctx.fillRect(x, y, 2, 2);
       ctx.fillRect(x - 3, y + 1, 8, 1);
       ctx.fillRect(x + 1, y - 3, 1, 8);
+    } else {
+      ctx.fillStyle = `rgba(255, 200, 230, ${alpha * 1.3})`;
+      ctx.beginPath(); ctx.arc(x, y, 1.5, 0, Math.PI * 2); ctx.fill();
     }
   }
 
-  // Palettes
-  const HAIR = ['#ffe066', '#8b4513', '#2a1a28', '#ff5fa8', '#9966cc', '#ff7755', '#ffffff', '#66ccff'];
-  const SKIN = ['#ffe0c4', '#f5cfa8', '#d4a573', '#a8785a', '#6b4a30'];
-  const DRESS = ['#ff4a9d', '#9966cc', '#66ccff', '#ff9944', '#88dd88', '#ffd93d', '#ff6b9d', '#c4a5e0'];
-  const HAIR_STYLES = ['long', 'bob', 'pigtails', 'updo', 'curly'];
-  const ACCESSORIES = [null, 'heart', 'bow', 'shades', null, null];
+  // Dollz palettes — saturated Y2K
+  const HAIR = [
+    { base: '#ffd93d', hi: '#fff6a8' },  // blonde
+    { base: '#5a3820', hi: '#8b5a35' },  // brown
+    { base: '#1a1020', hi: '#443850' },  // black
+    { base: '#ff4a9d', hi: '#ff9dc4' },  // hot pink
+    { base: '#7a3dcc', hi: '#b388e8' },  // purple
+    { base: '#ff7744', hi: '#ffb088' },  // orange/red
+    { base: '#33aaff', hi: '#88ccff' },  // blue
+    { base: '#d8d8e8', hi: '#ffffff' },  // silver/white
+    { base: '#33cc99', hi: '#88e8c4' },  // mint
+  ];
+  const SKIN = [
+    { base: '#ffe0c4', shade: '#e8b897' },
+    { base: '#f5cfa8', shade: '#d4a573' },
+    { base: '#d4a573', shade: '#a8785a' },
+    { base: '#a8785a', shade: '#6b4a30' },
+    { base: '#6b4a30', shade: '#443020' },
+  ];
+  const OUTFIT = [
+    { top: '#ff4a9d', bottom: '#1a1020' }, // hot pink top, black skirt
+    { top: '#88ddff', bottom: '#ff4a9d' }, // blue top, pink skirt
+    { top: '#ffffff', bottom: '#7a3dcc' }, // white top, purple skirt
+    { top: '#ffd93d', bottom: '#33cc99' }, // yellow + mint
+    { top: '#ff7744', bottom: '#1a1020' }, // orange + black
+    { top: '#9966cc', bottom: '#ffd93d' }, // lavender + yellow
+    { top: '#ff9dc4', bottom: '#ffffff' }, // pink + white
+    { top: '#88dd88', bottom: '#ff4a9d' }, // mint + pink
+  ];
+  const EYE_COLORS = ['#3a8cc4', '#4a7a3a', '#7a4a8a', '#5a3020', '#3a6a8a', '#8a4a3a'];
+  const HAIR_STYLES = ['long', 'bob', 'pigtails', 'pony', 'curly', 'space-buns'];
+  const POSES = ['stand', 'hip'];
+  const ACCESSORIES = [null, null, 'choker', 'bow', 'star-earring', 'heart-cheek'];
 
-  // 4 columns × 3 rows of dolls
-  const COLS = 4, ROWS = 3;
-  const TILE_W = w / COLS;
+  // 4 columns × 2 rows = 8 bigger dolls
+  const COLS = 4, ROWS = 2;
   const TOP_PAD = 60;
-  const TILE_H = (h - TOP_PAD - 20) / ROWS;
+  const BOTTOM_PAD = 20;
+  const TILE_W = w / COLS;
+  const TILE_H = (h - TOP_PAD - BOTTOM_PAD) / ROWS;
+
+  // Each doll: 30×55 grid at 3x pixel scale = 90×165 real px
+  const DOLL_W = 30 * 3;
+  const DOLL_H = 55 * 3;
 
   for (let row = 0; row < ROWS; row++) {
     for (let col = 0; col < COLS; col++) {
       const tileX = col * TILE_W;
       const tileY = TOP_PAD + row * TILE_H;
-      // center doll in tile
-      const dollOX = tileX + (TILE_W - 60) / 2;
-      const dollOY = tileY + (TILE_H - 80) / 2;
+      const dollOX = tileX + (TILE_W - DOLL_W) / 2;
+      const dollOY = tileY + (TILE_H - DOLL_H) / 2;
 
       const hair = HAIR[Math.floor(rand() * HAIR.length)];
       const skin = SKIN[Math.floor(rand() * SKIN.length)];
-      const dress = DRESS[Math.floor(rand() * DRESS.length)];
+      const outfit = OUTFIT[Math.floor(rand() * OUTFIT.length)];
+      const eyeColor = EYE_COLORS[Math.floor(rand() * EYE_COLORS.length)];
       const style = HAIR_STYLES[Math.floor(rand() * HAIR_STYLES.length)];
-      const acc = ACCESSORIES[Math.floor(rand() * ACCESSORIES.length)];
-      drawDoll(ctx, dollOX, dollOY, hair, skin, dress, style, acc);
+      const pose = POSES[Math.floor(rand() * POSES.length)];
+      const accessory = ACCESSORIES[Math.floor(rand() * ACCESSORIES.length)];
 
-      // nearby floating heart
-      if (rand() < 0.4) {
-        ctx.fillStyle = 'rgba(255, 70, 140, 0.7)';
-        drawHeart(ctx, tileX + 8 + rand() * 20, dollOY + 10 + rand() * 30, 4);
+      // tiny stage/shadow ellipse under feet
+      ctx.fillStyle = 'rgba(120, 50, 90, 0.2)';
+      ctx.beginPath();
+      ctx.ellipse(dollOX + DOLL_W / 2, dollOY + DOLL_H + 4, DOLL_W * 0.35, 4, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      drawDoll(ctx, dollOX, dollOY, { hair, skin, outfit, eyeColor, style, pose, accessory });
+
+      // occasional floating heart next to doll
+      if (rand() < 0.35) {
+        ctx.fillStyle = 'rgba(255, 70, 140, 0.85)';
+        drawHeart(ctx, tileX + 14 + rand() * 12, dollOY + 20 + rand() * 40, 5);
       }
     }
   }
 
-  // Title bar at top: "~* dollZ *~" in pixel-y Y2K style
-  // Solid pink bar
-  ctx.fillStyle = 'rgba(255, 255, 255, 0.55)';
+  // Title bar
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
   ctx.fillRect(0, 4, w, 46);
   ctx.strokeStyle = 'rgba(255, 70, 140, 0.6)';
   ctx.lineWidth = 2;
   ctx.strokeRect(1, 5, w - 2, 44);
-  // pixel text
   drawPixelText(ctx, '~* dollZ *~', w / 2, 26, '#c43090', 4);
 }
 
 function drawHeart(ctx, x, y, size) {
-  // tiny pixel heart using rectangles
   const s = Math.max(1, Math.round(size / 3));
   ctx.fillRect(x - s * 2, y - s, s * 2, s);
   ctx.fillRect(x,       y - s, s * 2, s);
@@ -286,125 +324,312 @@ function drawHeart(ctx, x, y, size) {
   ctx.fillRect(x - s,     y + s * 2, s * 2, s);
 }
 
-function drawDoll(ctx, ox, oy, hairColor, skinColor, dressColor, style, accessory) {
-  // Chunky 2x scale pixel art. Effective grid: 30 cols × 40 rows, each 2x2 real px.
-  const PX = 2;
-  const px = (col, row, color) => {
-    ctx.fillStyle = color;
-    ctx.fillRect(ox + col * PX, oy + row * PX, PX, PX);
-  };
+function drawDoll(ctx, ox, oy, params) {
+  // 30×55 grid at 3x pixel scale. Chibi-proportioned dollz-style figure.
+  // Grid layout:
+  //   rows 0-2   hair crown (above head)
+  //   rows 3-22  head (20 rows tall, ~18 cols wide)
+  //     rows 10-16  eye area (rows 11-15 = eyes proper, big anime style)
+  //     row 19       nose dot
+  //     row 21       mouth
+  //   rows 23-24  neck
+  //   rows 25-33  torso (tube top + bare midriff + skirt top)
+  //   rows 34-42  skirt
+  //   rows 43-50  legs
+  //   rows 51-54  platform shoes
+  const { hair, skin, outfit, eyeColor, style, pose, accessory } = params;
+  const PX = 3;
+
   const rect = (col, row, cols, rows, color) => {
     ctx.fillStyle = color;
     ctx.fillRect(ox + col * PX, oy + row * PX, cols * PX, rows * PX);
   };
+  const px = (col, row, color) => {
+    ctx.fillStyle = color;
+    ctx.fillRect(ox + col * PX, oy + row * PX, PX, PX);
+  };
 
-  const EYE = '#1a1028';
-  const MOUTH = '#c43060';
-  const BLUSH = 'rgba(255, 130, 180, 0.6)';
-  const LEGS_COLOR = skinColor;
-  const SHOE = '#1a1028';
+  const OUTLINE = '#1a1020';
+  const LIP = '#c43060';
+  const BLUSH = 'rgba(255, 130, 180, 0.55)';
+  const WHITE = '#ffffff';
 
-  // Hair BACK (behind head) — varies by style
+  // ============================================================
+  // HAIR BACK LAYER — fills behind head, varies by style
+  // ============================================================
   if (style === 'long') {
-    // long flowing, framing shoulders
-    rect(7, 2, 16, 26, hairColor);
+    // long flowing past shoulders, widening near ends
+    rect(5, 3, 20, 28, hair.base);
+    // highlight streak
+    rect(12, 5, 2, 22, hair.hi);
+    // tapered ends
+    px(4, 25, hair.base); px(25, 25, hair.base);
+    rect(4, 26, 2, 4, hair.base);
+    rect(24, 26, 2, 4, hair.base);
   } else if (style === 'bob') {
-    rect(8, 3, 14, 12, hairColor);
+    rect(5, 3, 20, 18, hair.base);
+    rect(12, 5, 2, 13, hair.hi);
   } else if (style === 'pigtails') {
-    rect(8, 3, 14, 11, hairColor);
-    rect(5, 8, 4, 10, hairColor);   // left pigtail
-    rect(21, 8, 4, 10, hairColor);  // right pigtail
-    rect(4, 16, 4, 3, hairColor);   // tail tip
-    rect(22, 16, 4, 3, hairColor);
-  } else if (style === 'updo') {
-    rect(10, 1, 10, 4, hairColor);  // bun
-    rect(11, -1, 8, 3, hairColor);
-    rect(9, 4, 12, 8, hairColor);
+    rect(5, 3, 20, 14, hair.base);
+    // pigtails drop down each side
+    rect(2, 10, 5, 18, hair.base);
+    rect(23, 10, 5, 18, hair.base);
+    // ties at top of pigtails
+    rect(2, 11, 5, 1, '#ff4a9d');
+    rect(23, 11, 5, 1, '#ff4a9d');
+    // highlights on pigtails
+    rect(3, 13, 1, 13, hair.hi);
+    rect(26, 13, 1, 13, hair.hi);
+  } else if (style === 'pony') {
+    rect(5, 3, 20, 14, hair.base);
+    // ponytail swept to the right
+    rect(22, 10, 6, 16, hair.base);
+    rect(25, 14, 2, 10, hair.hi);
   } else if (style === 'curly') {
-    rect(7, 2, 16, 13, hairColor);
-    // curl bumps
-    for (let i = 0; i < 6; i++) {
-      rect(7 + i * 3, 14, 2, 3, hairColor);
+    // voluminous curly frame
+    rect(3, 3, 24, 19, hair.base);
+    // curl bumps on outline
+    for (let i = 0; i < 8; i++) {
+      const cx = 3 + i * 3;
+      rect(cx, 2, 2, 2, hair.base);
     }
+    // highlights throughout
+    rect(8, 5, 2, 3, hair.hi);
+    rect(19, 6, 2, 4, hair.hi);
+    rect(13, 8, 2, 4, hair.hi);
+  } else if (style === 'space-buns') {
+    rect(5, 4, 20, 15, hair.base);
+    // two buns on top
+    rect(4, 0, 8, 7, hair.base);
+    rect(18, 0, 8, 7, hair.base);
+    // bun rings
+    rect(5, 1, 6, 5, hair.hi);
+    rect(19, 1, 6, 5, hair.hi);
+    px(8, 3, hair.base);
+    px(22, 3, hair.base);
   }
 
-  // Head (skin)
-  rect(10, 5, 10, 10, skinColor);
-  // Soften head corners to oval
-  px(10, 5, 'rgba(0,0,0,0)');
-  px(19, 5, 'rgba(0,0,0,0)');
-  px(10, 14, 'rgba(0,0,0,0)');
-  px(19, 14, 'rgba(0,0,0,0)');
+  // ============================================================
+  // HEAD — 18 cols × 20 rows, rounded corners
+  // ============================================================
+  // Main skin fill
+  rect(6, 3, 18, 20, skin.base);
+  // Round the top corners
+  rect(6, 3, 2, 1, 'rgba(0,0,0,0)');
+  rect(22, 3, 2, 1, 'rgba(0,0,0,0)');
+  px(6, 4, 'rgba(0,0,0,0)');
+  px(23, 4, 'rgba(0,0,0,0)');
+  // Round the bottom corners (chin taper)
+  rect(6, 22, 3, 1, 'rgba(0,0,0,0)');
+  rect(21, 22, 3, 1, 'rgba(0,0,0,0)');
+  px(7, 21, 'rgba(0,0,0,0)');
+  px(22, 21, 'rgba(0,0,0,0)');
+  // Cover removed pixels with background bleedthrough is not needed since
+  // we set rgba(0,0,0,0) — that doesn't erase, it's transparent fill.
+  // We actually need to NOT draw those pixels. Let's redo head with a mask.
+  // Simpler: draw head as a rounded rect fill using arcs.
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(ox + 8 * PX, oy + 3 * PX);
+  ctx.lineTo(ox + 22 * PX, oy + 3 * PX);
+  ctx.quadraticCurveTo(ox + 24 * PX, oy + 3 * PX, ox + 24 * PX, oy + 6 * PX);
+  ctx.lineTo(ox + 24 * PX, oy + 20 * PX);
+  ctx.quadraticCurveTo(ox + 24 * PX, oy + 23 * PX, ox + 21 * PX, oy + 23 * PX);
+  ctx.lineTo(ox + 9 * PX, oy + 23 * PX);
+  ctx.quadraticCurveTo(ox + 6 * PX, oy + 23 * PX, ox + 6 * PX, oy + 20 * PX);
+  ctx.lineTo(ox + 6 * PX, oy + 6 * PX);
+  ctx.quadraticCurveTo(ox + 6 * PX, oy + 3 * PX, ox + 8 * PX, oy + 3 * PX);
+  ctx.closePath();
+  ctx.clip();
+  // Clear (redraw bg won't work, so fill with background-matching tone — nope.
+  // Instead: just draw full head and rely on clip to shape it.
+  ctx.fillStyle = skin.base;
+  ctx.fillRect(ox, oy, 30 * PX, 25 * PX);
+  // subtle shading on one side of face
+  ctx.fillStyle = skin.shade;
+  ctx.globalAlpha = 0.4;
+  ctx.fillRect(ox + 18 * PX, oy + 8 * PX, 6 * PX, 14 * PX);
+  ctx.globalAlpha = 1;
+  ctx.restore();
 
-  // Hair FRONT (fringe)
-  if (style === 'long' || style === 'bob' || style === 'curly') {
-    rect(10, 5, 10, 2, hairColor);
-    px(10, 7, hairColor);
-    px(19, 7, hairColor);
-  } else if (style === 'pigtails') {
-    rect(10, 5, 10, 2, hairColor);
-  } else if (style === 'updo') {
-    rect(10, 5, 10, 1, hairColor);
+  // ============================================================
+  // HAIR FRONT (bangs/fringe) — drawn over forehead
+  // ============================================================
+  if (style === 'long' || style === 'bob' || style === 'pigtails' || style === 'pony' || style === 'space-buns') {
+    // side-swept bangs
+    rect(6, 3, 18, 3, hair.base);
+    px(6, 6, hair.base);
+    px(7, 6, hair.base);
+    px(22, 6, hair.base);
+    px(23, 6, hair.base);
+    // bang highlight
+    rect(11, 4, 2, 2, hair.hi);
+  } else if (style === 'curly') {
+    rect(6, 3, 18, 4, hair.base);
+    rect(10, 5, 3, 2, hair.hi);
   }
 
-  // Blush
+  // ============================================================
+  // EYES — big dollz-style with iris, pupil, highlight, lashes
+  // Each eye: 5 cols × 6 rows at positions (9,11) and (16,11)
+  // ============================================================
+  // Upper lashes extending up (outer corners)
+  px(8, 10, OUTLINE);
+  px(9, 10, OUTLINE);
+  px(16, 10, OUTLINE);
+  px(17, 10, OUTLINE);
+  // left eye
+  drawEye(ctx, ox + 9 * PX, oy + 11 * PX, PX, eyeColor);
+  // right eye
+  drawEye(ctx, ox + 16 * PX, oy + 11 * PX, PX, eyeColor);
+
+  // ============================================================
+  // BLUSH
+  // ============================================================
   ctx.fillStyle = BLUSH;
-  ctx.fillRect(ox + 11 * PX, oy + 11 * PX, 2 * PX, PX);
-  ctx.fillRect(ox + 17 * PX, oy + 11 * PX, 2 * PX, PX);
+  ctx.fillRect(ox + 7 * PX, oy + 17 * PX, 3 * PX, 2 * PX);
+  ctx.fillRect(ox + 20 * PX, oy + 17 * PX, 3 * PX, 2 * PX);
 
-  // Eyes (with white highlight)
-  if (accessory === 'shades') {
-    rect(11, 9, 8, 2, '#1a1028');
-    px(12, 9, '#ff5fa8');
-    px(16, 9, '#ff5fa8');
-  } else {
-    rect(12, 8, 2, 3, EYE);
-    rect(16, 8, 2, 3, EYE);
-    px(13, 8, '#fff');
-    px(17, 8, '#fff');
-  }
+  // ============================================================
+  // NOSE (tiny) + MOUTH
+  // ============================================================
+  px(14, 17, skin.shade);
+  px(15, 17, skin.shade);
+  // mouth
+  rect(13, 20, 4, 1, LIP);
+  px(13, 21, LIP);
+  px(16, 21, LIP);
 
-  // Mouth
-  rect(13, 12, 4, 1, MOUTH);
-
-  // Accessory: bow on hair
-  if (accessory === 'bow') {
-    rect(8, 3, 3, 2, '#ff4a9d');
-    rect(19, 3, 3, 2, '#ff4a9d');
-    rect(11, 3, 8, 2, '#ff4a9d');
-    px(14, 3, '#fff');
-  }
-
-  // Neck
-  rect(13, 15, 4, 2, skinColor);
-
-  // Dress — A-line trapezoid, built row by row
-  for (let r = 0; r < 14; r++) {
-    const width = 8 + r; // grows from 8 to 21
-    const startCol = 15 - Math.floor(width / 2);
-    rect(startCol, 17 + r, width, 1, dressColor);
-  }
-  // Dress highlight (slight shimmer)
-  ctx.fillStyle = 'rgba(255,255,255,0.2)';
-  ctx.fillRect(ox + 14 * PX, oy + 19 * PX, PX, 8 * PX);
-
-  // Arms
-  rect(7, 18, 2, 11, skinColor);
-  rect(21, 18, 2, 11, skinColor);
-
-  // Legs
-  rect(12, 31, 2, 6, LEGS_COLOR);
-  rect(16, 31, 2, 6, LEGS_COLOR);
-
-  // Shoes (little mary janes)
-  rect(11, 37, 4, 2, SHOE);
-  rect(15, 37, 4, 2, SHOE);
-
-  // Floating heart accessory
-  if (accessory === 'heart') {
+  // Accessory: heart on cheek
+  if (accessory === 'heart-cheek') {
     ctx.fillStyle = '#ff4a9d';
-    drawHeart(ctx, ox + 30 * PX, oy + 8 * PX, 4);
+    drawHeart(ctx, ox + 21 * PX, oy + 17 * PX, 4);
   }
+
+  // Accessory: bow in hair
+  if (accessory === 'bow') {
+    const bowCol = '#ff4a9d';
+    rect(11, 1, 2, 2, bowCol);
+    rect(17, 1, 2, 2, bowCol);
+    rect(13, 1, 4, 2, bowCol);
+    px(15, 1, WHITE);
+  }
+
+  // Star earring (tiny yellow star by ear)
+  if (accessory === 'star-earring') {
+    ctx.fillStyle = '#ffd93d';
+    ctx.fillRect(ox + 5 * PX, oy + 14 * PX, PX, PX);
+    ctx.fillRect(ox + 4 * PX, oy + 15 * PX, 3 * PX, PX);
+    ctx.fillRect(ox + 5 * PX, oy + 16 * PX, PX, PX);
+  }
+
+  // ============================================================
+  // NECK
+  // ============================================================
+  rect(13, 23, 4, 2, skin.base);
+
+  // Choker
+  if (accessory === 'choker') {
+    rect(13, 24, 4, 1, '#1a1020');
+    px(14, 24, '#ff4a9d');
+  }
+
+  // ============================================================
+  // TORSO — tube top + bare midriff + skirt waistband
+  // ============================================================
+  // Shoulders/chest — tube top (rows 25-28)
+  rect(10, 25, 10, 4, outfit.top);
+  // top highlight streak
+  rect(11, 25, 2, 3, 'rgba(255,255,255,0.3)');
+  // bare midriff (rows 29-31)
+  rect(11, 29, 8, 3, skin.base);
+  // navel (tiny)
+  px(15, 30, skin.shade);
+  // skirt waistband (rows 32-33)
+  rect(10, 32, 10, 2, outfit.bottom);
+  // belt highlight
+  px(15, 32, '#ffd93d');
+
+  // ============================================================
+  // ARMS (skin, thin)
+  // Pose: 'stand' = both arms straight. 'hip' = right arm bent on hip.
+  // ============================================================
+  // Left arm (always straight down)
+  rect(8, 25, 2, 11, skin.base);
+  if (pose === 'hip') {
+    // Right arm bends up and sits on hip — upper arm out, forearm down to waist
+    rect(20, 25, 2, 4, skin.base);          // upper arm from shoulder
+    rect(20, 28, 4, 2, skin.base);          // elbow out to side
+    rect(22, 28, 2, 5, skin.base);          // forearm down to hip
+  } else {
+    rect(20, 25, 2, 11, skin.base);
+  }
+
+  // ============================================================
+  // SKIRT (mini, flares slightly)
+  // ============================================================
+  for (let r = 0; r < 8; r++) {
+    const extra = Math.floor(r * 0.6);
+    const startCol = 10 - extra;
+    const width = 10 + extra * 2;
+    rect(startCol, 34 + r, width, 1, outfit.bottom);
+  }
+  // skirt shine
+  ctx.fillStyle = 'rgba(255,255,255,0.18)';
+  ctx.fillRect(ox + 12 * PX, oy + 35 * PX, PX, 6 * PX);
+
+  // ============================================================
+  // LEGS (thin, skin color)
+  // ============================================================
+  rect(12, 42, 2, 9, skin.base);
+  rect(16, 42, 2, 9, skin.base);
+
+  // ============================================================
+  // PLATFORM SHOES (chunky)
+  // ============================================================
+  const shoe = '#1a1020';
+  rect(11, 51, 4, 3, shoe);
+  rect(15, 51, 4, 3, shoe);
+  // platform soles (lighter, lifted)
+  rect(11, 52, 4, 2, '#443340');
+  rect(15, 52, 4, 2, '#443340');
+}
+
+function drawEye(ctx, x, y, PX, eyeColor) {
+  // Each eye is 5 cols × 5 rows. Anime dollz style.
+  //   ----- row 0: top outline (eyelash)
+  //   wWwwO row 1: white-iris-iris-iris-outline
+  //   wIIIO row 2: white-iris-iris-iris-outline
+  //   wIIIO row 3: same
+  //   -EEE- row 4: bottom outline
+  const OUT = '#1a1020';
+  const WHITE = '#ffffff';
+  const HIGH = '#ffffff';
+  const r = (col, row, cols, rows, color) => {
+    ctx.fillStyle = color;
+    ctx.fillRect(x + col * PX, y + row * PX, cols * PX, rows * PX);
+  };
+  const p = (col, row, color) => {
+    ctx.fillStyle = color;
+    ctx.fillRect(x + col * PX, y + row * PX, PX, PX);
+  };
+  // Top eyelash (thicker)
+  r(0, 0, 5, 1, OUT);
+  // Side outlines
+  p(0, 1, OUT); p(4, 1, OUT);
+  p(0, 2, OUT); p(4, 2, OUT);
+  p(0, 3, OUT); p(4, 3, OUT);
+  // Bottom
+  r(1, 4, 3, 1, OUT);
+  // White of eye
+  p(1, 1, WHITE);
+  // Iris (3 wide × 3 tall)
+  r(1, 2, 3, 2, eyeColor);
+  // Pupil (1×2 center)
+  r(2, 2, 1, 2, OUT);
+  // Highlight (sparkle)
+  p(1, 1, WHITE);
+  p(3, 1, WHITE);
 }
 
 // Minimal pixel text — only the characters we need for "~* dollZ *~"
