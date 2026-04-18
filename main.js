@@ -9,14 +9,19 @@ async function main() {
   const canvas = document.getElementById('canvas');
   const loading = document.getElementById('loading');
 
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-  renderer.setPixelRatio(window.devicePixelRatio);
+  // Touch devices / small viewports get a lower pixel ratio, smaller maze, and no
+  // multi-sample AA — these cut GPU work roughly in half on typical phones where
+  // devicePixelRatio is 2-3.
+  const IS_MOBILE = window.matchMedia('(pointer: coarse)').matches || window.innerWidth < 700;
+
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: !IS_MOBILE });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, IS_MOBILE ? 1.5 : 2));
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0x1a1028);
   scene.fog = new THREE.FogExp2(0x1a1028, 0.035);
   const camera = new THREE.PerspectiveCamera(70, 1, 0.1, 200);
 
-  const MAZE_COLS = 16, MAZE_ROWS = 16;
+  const MAZE_COLS = IS_MOBILE ? 12 : 16, MAZE_ROWS = IS_MOBILE ? 12 : 16;
   const maze = generateMaze(MAZE_COLS, MAZE_ROWS);
 
   // placeholders while assets load
