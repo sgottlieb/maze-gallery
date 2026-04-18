@@ -64,6 +64,26 @@ async function main() {
 
   loading.classList.add('hidden');
 
+  const { mountOverlay } = await import('./ui/config.js');
+  mountOverlay(document.getElementById('overlay-root'), {
+    onSelectionChange: (surface, ids) => {
+      const facesBySurface = {
+        walls: world.wallFaces,
+        floor: world.floorFaces,
+        ceiling: world.ceilingFaces,
+      };
+      const faces = facesBySurface[surface];
+      if (faces) assignFaceMaterials(faces, ids, registry);
+    },
+    onMute: (_muted) => { /* Task 14 will wire audio */ },
+    onFullscreen: () => {
+      const el = document.documentElement;
+      if (!document.fullscreenElement) el.requestFullscreen?.();
+      else document.exitFullscreen?.();
+    },
+    audioAvailable: false,
+  });
+
   // Exposed for Task 12 wiring
   window.__maze = { world, registry };
 }
