@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { generateMaze } from './scene/maze.js';
 import { buildWorld, CELL } from './scene/world.js';
+import { createDrift } from './scene/drift.js';
 
 const canvas = document.getElementById('canvas');
 const loading = document.getElementById('loading');
@@ -23,9 +24,7 @@ const placeholder = {
 const world = buildWorld(maze, placeholder);
 scene.add(world.group);
 
-// Static overview camera so we can see the maze layout.
-camera.position.set(MAZE_COLS * CELL / 2, MAZE_ROWS * CELL * 0.8, MAZE_ROWS * CELL * 1.2);
-camera.lookAt(MAZE_COLS * CELL / 2, 0, MAZE_ROWS * CELL / 2);
+const updateDrift = createDrift(camera, maze, 0, 0);
 
 function resize() {
   const w = canvas.clientWidth, h = canvas.clientHeight;
@@ -36,10 +35,15 @@ function resize() {
 window.addEventListener('resize', resize);
 resize();
 
-function loop() {
+let last = performance.now() / 1000;
+function loop(nowMs) {
+  const nowSec = nowMs / 1000;
+  const dt = Math.min(0.05, nowSec - last);
+  last = nowSec;
+  updateDrift(dt, nowSec);
   renderer.render(scene, camera);
   requestAnimationFrame(loop);
 }
-loop();
+requestAnimationFrame(loop);
 
 loading.classList.add('hidden');
