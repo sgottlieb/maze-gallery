@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Dollz wall composer · 3D Maze</title>
+<style>
+  body { background: #1a1028; color: #fff; font-family: system-ui, sans-serif; padding: 24px; }
+  h1 { margin: 0 0 6px; font-size: 18px; letter-spacing: 0.5px; }
+  p { color: rgba(255,255,255,0.7); font-size: 13px; line-height: 1.5; margin: 0 0 18px; max-width: 640px; }
+  code { background: rgba(255,255,255,0.08); padding: 1px 6px; border-radius: 3px; font-size: 12px; }
+  canvas { border: 1px solid rgba(255,255,255,0.15); image-rendering: pixelated; display: block; }
+  button {
+    background: #b89ad8; color: #1a1028; border: 0;
+    padding: 10px 20px; font-size: 13px; letter-spacing: 1px; text-transform: uppercase;
+    cursor: pointer; border-radius: 4px; font-weight: 600; margin-top: 16px;
+  }
+  button:hover { background: #c9afe4; }
+  .credit { margin-top: 14px; font-size: 11px; color: rgba(255,255,255,0.5); }
+  .credit a { color: #b89ad8; }
+</style>
+</head>
+<body>
+
+<h1>Dollz wall composer</h1>
+<p>
+  16 dollz sampled from Dollzmania (preppy / emo-scene / fantasy / wonderkins) arranged on a pink Y2K wall.
+  Click <strong>Download Dollz.png</strong>, then move the file into <code>art/retro/</code>.
+</p>
+
+<canvas id="c" width="512" height="512" style="width: 512px; height: 512px;"></canvas>
+<button id="dl">Download Dollz.png</button>
+
+<p class="credit">
+  Dollz art sourced from
+  <a href="https://dollzmania.neocities.org/galleries/" target="_blank">dollzmania.neocities.org</a>
+  — a community archive preserving early-2000s pixel doll art.
+</p>
+
+<script>
+const DOLLS = [
+  // preppy
+  'dollz-src/preppy_preppy0.gif',
+  'dollz-src/preppy_preppy1.gif',
+  'dollz-src/preppy_preppy2.gif',
+  'dollz-src/preppy_preppy3.gif',
+  // emo / scene
+  'dollz-src/emo-and-scene_emo_dollz0.gif',
+  'dollz-src/emo-and-scene_emo_dollz1.gif',
+  'dollz-src/emo-and-scene_emo_dollz3.gif',
+  'dollz-src/emo-and-scene_emo_dollz4.gif',
+  // fantasy
+  'dollz-src/fantasy_fantasy0.gif',
+  'dollz-src/fantasy_fantasy2.gif',
+  'dollz-src/fantasy_fantasy3.gif',
+  'dollz-src/fantasy_fantasy4.gif',
+  // wonderkins
+  'dollz-src/wonderkins_wonder0.gif',
+  'dollz-src/wonderkins_wonder1.gif',
+  'dollz-src/wonderkins_wonder3.gif',
+  'dollz-src/wonderkins_wonder4.gif',
+];
+
+function loadImage(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error('failed: ' + src));
+    img.src = src;
+  });
+}
+
+function drawHeart(ctx, x, y, size) {
+  const s = Math.max(1, Math.round(size / 3));
+  ctx.fillRect(x - s * 2, y - s, s * 2, s);
+  ctx.fillRect(x, y - s, s * 2, s);
+  ctx.fillRect(x - s * 3, y, s * 6, s);
+  ctx.fillRect(x - s * 2, y + s, s * 4, s);
+  ctx.fillRect(x - s, y + s * 2, s * 2, s);
+}
+
+function drawPixelText(ctx, text, cx, cy, color, scale = 3) {
+  const GLYPHS = {
+    'd': ['01110','10001','10001','10001','10001','10001','01111'],
+    'o': ['01110','10001','10001','10001','10001','10001','01110'],
+    'l': ['11100','00100','00100','00100','00100','00100','11111'],
+    'Z': ['11111','00001','00010','00100','01000','10000','11111'],
+    '~': ['00000','01001','10110','00000','00000','00000','00000'],
+    '*': ['00100','10101','01110','11111','01110','10101','00100'],
+    ' ': ['00000','00000','00000','00000','00000','00000','00000'],
+  };
+  const chars = text.split('');
+  const totalWidth = chars.length * 6 * scale;
+  let x = cx - totalWidth / 2;
+  const y = cy - (7 * scale) / 2;
+  ctx.fillStyle = color;
+  for (const ch of chars) {
+    const g = GLYPHS[ch];
+    if (!g) { x += 6 * scale; continue; }
+    for (let r = 0; r < 7; r++) {
+      for (let c = 0; c < 5; c++) {
+        if (g[r][c] === '1') ctx.fillRect(x + c * scale, y + r * scale, scale, scale);
+      }
+    }
+    x += 6 * scale;
+  }
+}
+
+async function compose() {
+  const canvas = document.getElementById('c');
+  const W = canvas.width, H = canvas.height;
+  const ctx = canvas.getContext('2d');
+  ctx.imageSmoothingEnabled = false;
+
+  // Pink gradient background
+  const grad = ctx.createLinearGradient(0, 0, 0, H);
+  grad.addColorStop(0, '#ffd4ea');
+  grad.addColorStop(1, '#ffa8cc');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, W, H);
+
+  // Deterministic glitter backdrop
+  let seed = 9;
+  const rand = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 0x100000000; };
+  for (let i = 0; i < 55; i++) {
+    const x = rand() * W, y = rand() * H;
+    const alpha = 0.18 + rand() * 0.3;
+    const roll = rand();
+    if (roll < 0.5) {
+      ctx.fillStyle = `rgba(255, 100, 170, ${alpha})`;
+      drawHeart(ctx, x, y, 3 + rand() * 3);
+    } else if (roll < 0.85) {
+      ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+      ctx.fillRect(x, y, 2, 2);
+      ctx.fillRect(x - 3, y + 1, 8, 1);
+      ctx.fillRect(x + 1, y - 3, 1, 8);
+    } else {
+      ctx.fillStyle = `rgba(255, 200, 230, ${alpha * 1.2})`;
+      ctx.beginPath();
+      ctx.arc(x, y, 1.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  // Title bar
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+  ctx.fillRect(0, 4, W, 46);
+  ctx.strokeStyle = 'rgba(255, 70, 140, 0.6)';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(1, 5, W - 2, 44);
+  drawPixelText(ctx, '~* dollZ *~', W / 2, 26, '#c43090', 4);
+
+  // Layout: 4 cols × 4 rows
+  const TOP_PAD = 58;
+  const BOTTOM_PAD = 12;
+  const COLS = 4, ROWS = 4;
+  const TILE_W = W / COLS;
+  const TILE_H = (H - TOP_PAD - BOTTOM_PAD) / ROWS;
+  const MAX_W = 95, MAX_H = TILE_H - 8;
+
+  const imgs = await Promise.all(DOLLS.map(src => loadImage(src).catch((e) => { console.warn(e); return null; })));
+  for (let i = 0; i < imgs.length; i++) {
+    const img = imgs[i];
+    if (!img) continue;
+    const row = Math.floor(i / COLS);
+    const col = i % COLS;
+    const tileX = col * TILE_W;
+    const tileY = TOP_PAD + row * TILE_H;
+
+    const scale = Math.min(MAX_W / img.width, MAX_H / img.height);
+    const dW = img.width * scale;
+    const dH = img.height * scale;
+    const dX = tileX + (TILE_W - dW) / 2;
+    const dY = tileY + (TILE_H - dH) / 2;
+
+    // shadow under feet
+    ctx.fillStyle = 'rgba(120, 50, 90, 0.22)';
+    ctx.beginPath();
+    ctx.ellipse(dX + dW / 2, dY + dH + 2, dW * 0.32, 3, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.drawImage(img, dX, dY, dW, dH);
+  }
+}
+
+compose().then(() => {
+  document.getElementById('dl').addEventListener('click', () => {
+    const canvas = document.getElementById('c');
+    canvas.toBlob((blob) => {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'Dollz.png';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }, 'image/png');
+  });
+});
+</script>
+
+</body>
+</html>
