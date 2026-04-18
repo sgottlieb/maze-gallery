@@ -16,6 +16,15 @@ export function mountOverlay(root, { onSelectionChange, onMute, onFullscreen, au
   pill.textContent = 'Configure';
   root.appendChild(pill);
 
+  // Always-visible fullscreen button in the top-right corner.
+  const fsCornerBtn = document.createElement('button');
+  fsCornerBtn.className = 'cfg-fs-corner';
+  fsCornerBtn.textContent = '⛶';
+  fsCornerBtn.title = 'fullscreen';
+  fsCornerBtn.setAttribute('aria-label', 'toggle fullscreen');
+  fsCornerBtn.addEventListener('click', () => onFullscreen?.());
+  root.appendChild(fsCornerBtn);
+
   const drawer = document.createElement('div');
   drawer.className = 'cfg-drawer';
   root.appendChild(drawer);
