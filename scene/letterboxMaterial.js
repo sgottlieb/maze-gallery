@@ -21,6 +21,13 @@ const FRAG = /* glsl */`
 
   void main() {
     vec2 uv = vUv;
+    // Each face is double-sided. The back side would display a horizontal mirror of
+    // the texture, which makes watermarks/signatures read backwards. Flip u on the
+    // back side so the image reads correctly regardless of which side the camera
+    // approaches from.
+    if (!gl_FrontFacing) {
+      uv.x = 1.0 - uv.x;
+    }
     // Face aspect is 1.0 (square). Compute contain-fit offset.
     vec2 fit;
     vec2 offset;
