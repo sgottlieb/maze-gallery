@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <title>3D Maze — Sara Gottlieb</title>
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; background: #08040f; color: #fff; font-family: system-ui, sans-serif; }
+    body { overflow: hidden; }
+    #canvas { display: block; width: 100vw; height: 100vh; }
+    #loading {
+      position: fixed; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(255,255,255,0.6); font-size: 12px; letter-spacing: 1px;
+      pointer-events: none;
+    }
+    #loading.hidden { display: none; }
+  </style>
+  <link rel="stylesheet" href="./ui/config.css" />
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.170.0/build/three.module.js"
+    }
+  }
+  </script>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+  <div id="loading">loading…</div>
+  <div id="overlay-root"></div>
+
+  <script type="module" src="./main.js"></script>
+</body>
+</html>
