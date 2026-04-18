@@ -9,7 +9,8 @@ const loading = document.getElementById('loading');
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
 renderer.setPixelRatio(window.devicePixelRatio);
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x08040f);
+scene.background = new THREE.Color(0x1a1028); // match fog color so edges fade seamlessly
+scene.fog = new THREE.FogExp2(0x1a1028, 0.035);
 const camera = new THREE.PerspectiveCamera(70, 1, 0.1, 200);
 
 const MAZE_COLS = 16, MAZE_ROWS = 16;
@@ -23,6 +24,13 @@ const placeholder = {
 
 const world = buildWorld(maze, placeholder);
 scene.add(world.group);
+
+const ambient = new THREE.AmbientLight(0x2a2040, 0.6);
+scene.add(ambient);
+
+const camLight = new THREE.PointLight(0xffccee, 0.8, 30, 2);
+camera.add(camLight);
+scene.add(camera);
 
 const updateDrift = createDrift(camera, maze, 0, 0);
 
