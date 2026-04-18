@@ -3,9 +3,9 @@ import { CELL } from './world.js';
 
 // Directions in maze-grid space (+x right, +y forward in world z).
 const DIRS = [
-  { dx: 0, dy: 1, yaw: 0, wall: 's' },            // south (+z)
+  { dx: 0, dy: 1, yaw: Math.PI, wall: 's' },      // south (+z)
   { dx: 1, dy: 0, yaw: -Math.PI / 2, wall: 'e' }, // east (+x)
-  { dx: 0, dy: -1, yaw: Math.PI, wall: 'n' },     // north (-z)
+  { dx: 0, dy: -1, yaw: 0, wall: 'n' },           // north (-z)
   { dx: -1, dy: 0, yaw: Math.PI / 2, wall: 'w' }, // west (-x)
 ];
 
