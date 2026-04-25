@@ -338,9 +338,9 @@ function sparkleLoop() {
   if (fogAlpha > 0.01) {
     sparkleCtx.save();
     const grad = sparkleCtx.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, width * 0.6);
-    grad.addColorStop(0, `rgba(232, 218, 239, ${fogAlpha * 0.35})`);
-    grad.addColorStop(0.5, `rgba(245, 208, 224, ${fogAlpha * 0.2})`);
-    grad.addColorStop(1, `rgba(255, 239, 213, ${fogAlpha * 0.1})`);
+    grad.addColorStop(0, `rgba(242, 212, 221, ${fogAlpha * 0.3})`);
+    grad.addColorStop(0.5, `rgba(245, 240, 235, ${fogAlpha * 0.18})`);
+    grad.addColorStop(1, `rgba(212, 207, 201, ${fogAlpha * 0.08})`);
     sparkleCtx.fillStyle = grad;
     sparkleCtx.fillRect(0, 0, width, height);
     sparkleCtx.restore();
@@ -389,7 +389,7 @@ function sparkleLoop() {
   sparkleRAF = requestAnimationFrame(sparkleLoop);
 }
 
-const SPARKLE_COLORS = ['#f5d0e0', '#ffeaa7', '#dfe6e9', '#fab1a0', '#e8daef', '#ffefd5'];
+const SPARKLE_COLORS = ['#f2d4dd', '#e8c8d0', '#ffffff', '#f5f0eb', '#d4cfc9', '#b8b0a8', '#efe4dc', '#dfd5cd', '#f0e6e8', '#c8beb6'];
 
 function createSparkle(x, y, isBurst) {
   const angle = Math.random() * Math.PI * 2;
