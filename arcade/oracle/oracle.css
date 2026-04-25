@@ -323,3 +323,39 @@
   pointer-events: none;
   z-index: 100;
 }
+
+/* ---- Mobile (rotated landscape) ---- */
+@media (max-width: 700px) and (orientation: portrait) {
+  #spread-picker {
+    max-width: 90%;
+    height: 50vh;
+  }
+
+  .spread-suit { font-size: 1.5rem; }
+  .spread-name { font-size: 0.8rem; }
+  .spread-count { font-size: 0.65rem; }
+
+  #prompt-text { font-size: 0.95rem; max-width: 260px; }
+
+  #spread-area { gap: 10px; padding-top: 12px; }
+
+  .card-label .position-name { font-size: 0.65rem; }
+  .card-label .card-name { font-size: 0.7rem; }
+  .card-label .card-theme { font-size: 0.6rem; }
+
+  #answer-display .answer-text { font-size: 1.5rem; }
+  #answer-display .answer-detail { font-size: 0.75rem; }
+}
+
+/* ---- Small phones: tighter card spacing ---- */
+@media (max-width: 400px) {
+  #spread-area { gap: 6px; }
+}
+
+/* ---- Tablet ---- */
+@media (min-width: 701px) and (max-width: 1000px) {
+  #spread-picker {
+    max-width: 420px;
+    height: 50vh;
+  }
+}
