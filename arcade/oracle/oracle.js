@@ -301,8 +301,109 @@ function showComplete() {
   $('#complete-area').classList.remove('hidden');
 }
 
-function burstAt() {}
-function initSparkle() {}
+// ---- Sparkle Engine ----
+let sparkleCtx = null;
+let sparkles = [];
+let sparkleRAF = null;
+
+function initSparkle() {
+  const canvas = $('#sparkle-canvas');
+  const gameEl = $('#game');
+  sparkleCtx = canvas.getContext('2d');
+
+  function resize() {
+    canvas.width = gameEl.clientWidth;
+    canvas.height = gameEl.clientHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  sparkleLoop();
+}
+
+function sparkleLoop() {
+  if (!sparkleCtx) return;
+  const { width, height } = sparkleCtx.canvas;
+  sparkleCtx.clearRect(0, 0, width, height);
+
+  if (Math.random() < 0.3) {
+    sparkles.push(createSparkle(
+      Math.random() * width,
+      Math.random() * height,
+      false
+    ));
+  }
+
+  for (let i = sparkles.length - 1; i >= 0; i--) {
+    const s = sparkles[i];
+    s.life -= s.decay;
+    if (s.life <= 0) {
+      sparkles.splice(i, 1);
+      continue;
+    }
+    s.x += s.vx;
+    s.y += s.vy;
+    s.vy += 0.01;
+    s.rotation += s.spin;
+
+    const alpha = s.life;
+    sparkleCtx.save();
+    sparkleCtx.translate(s.x, s.y);
+    sparkleCtx.rotate(s.rotation);
+    sparkleCtx.globalAlpha = alpha;
+    drawSparkleShape(sparkleCtx, s.size, s.color);
+    sparkleCtx.restore();
+  }
+
+  sparkleRAF = requestAnimationFrame(sparkleLoop);
+}
+
+function createSparkle(x, y, isBurst) {
+  const angle = Math.random() * Math.PI * 2;
+  const speed = isBurst ? (1 + Math.random() * 3) : (0.1 + Math.random() * 0.3);
+  const colors = ['#f5d0e0', '#ffeaa7', '#dfe6e9', '#fab1a0', '#e8daef', '#ffefd5'];
+  return {
+    x,
+    y,
+    vx: Math.cos(angle) * speed,
+    vy: Math.sin(angle) * speed - (isBurst ? 1 : 0),
+    size: isBurst ? (2 + Math.random() * 4) : (1 + Math.random() * 2),
+    life: 1,
+    decay: isBurst ? (0.015 + Math.random() * 0.02) : (0.005 + Math.random() * 0.008),
+    rotation: Math.random() * Math.PI * 2,
+    spin: (Math.random() - 0.5) * 0.1,
+    color: colors[Math.floor(Math.random() * colors.length)]
+  };
+}
+
+function drawSparkleShape(ctx, size, color) {
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  for (let i = 0; i < 4; i++) {
+    const a = (i / 4) * Math.PI * 2 - Math.PI / 2;
+    const ax = Math.cos(a) * size;
+    const ay = Math.sin(a) * size;
+    const b = ((i + 0.5) / 4) * Math.PI * 2 - Math.PI / 2;
+    const bx = Math.cos(b) * size * 0.35;
+    const by = Math.sin(b) * size * 0.35;
+    if (i === 0) ctx.moveTo(ax, ay);
+    else ctx.lineTo(ax, ay);
+    ctx.lineTo(bx, by);
+  }
+  ctx.closePath();
+  ctx.fill();
+}
+
+function burstAt(clientX, clientY) {
+  const canvas = $('#sparkle-canvas');
+  const rect = canvas.getBoundingClientRect();
+  const x = clientX - rect.left;
+  const y = clientY - rect.top;
+
+  for (let i = 0; i < 20; i++) {
+    sparkles.push(createSparkle(x, y, true));
+  }
+}
 
 function init() {
   $('#center-deck').style.backgroundImage = `url('${BACK_IMAGE}')`;
