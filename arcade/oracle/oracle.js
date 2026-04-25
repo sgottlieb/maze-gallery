@@ -412,15 +412,16 @@ function createSparkle(x, y, isBurst) {
 
 function createSmallSparkle(x, y) {
   const angle = Math.random() * Math.PI * 2;
+  const speed = 0.1 + Math.random() * 0.3;
   return {
     x,
     y,
-    vx: Math.cos(angle) * (0.05 + Math.random() * 0.2),
-    vy: Math.sin(angle) * (0.05 + Math.random() * 0.2),
+    vx: Math.cos(angle) * speed,
+    vy: Math.sin(angle) * speed,
     size: 0.5 + Math.random() * 1.5,
     life: 1,
     maxAlpha: 0.6 + Math.random() * 0.4,
-    gravity: 0.005,
+    gravity: 0,
     decay: 0.008 + Math.random() * 0.012,
     rotation: Math.random() * Math.PI * 2,
     spin: (Math.random() - 0.5) * 0.15,
@@ -430,15 +431,16 @@ function createSmallSparkle(x, y) {
 
 function createFogSparkle(x, y) {
   const angle = Math.random() * Math.PI * 2;
+  const speed = 0.15 + Math.random() * 0.35;
   return {
     x,
     y,
-    vx: Math.cos(angle) * (0.05 + Math.random() * 0.2),
-    vy: -0.15 - Math.random() * 0.3,
+    vx: Math.cos(angle) * speed,
+    vy: Math.sin(angle) * speed,
     size: 4 + Math.random() * 8,
     life: 1,
     maxAlpha: 0.5 + Math.random() * 0.3,
-    gravity: -0.003,
+    gravity: 0,
     decay: 0.002 + Math.random() * 0.003,
     rotation: Math.random() * Math.PI * 2,
     spin: (Math.random() - 0.5) * 0.03,
