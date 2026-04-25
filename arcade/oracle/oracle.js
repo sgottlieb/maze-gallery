@@ -455,6 +455,7 @@ function createFogSparkle(x, y) {
 }
 
 function drawSparkleShape(ctx, size, color) {
+  // Sharp 7-pointed star
   ctx.fillStyle = color;
   ctx.beginPath();
   for (let i = 0; i < 7; i++) {
@@ -462,13 +463,22 @@ function drawSparkleShape(ctx, size, color) {
     const ax = Math.cos(a) * size;
     const ay = Math.sin(a) * size;
     const b = ((i + 0.5) / 7) * Math.PI * 2 - Math.PI / 2;
-    const bx = Math.cos(b) * size * 0.4;
-    const by = Math.sin(b) * size * 0.4;
+    const bx = Math.cos(b) * size * 0.2;
+    const by = Math.sin(b) * size * 0.2;
     if (i === 0) ctx.moveTo(ax, ay);
     else ctx.lineTo(ax, ay);
     ctx.lineTo(bx, by);
   }
   ctx.closePath();
+  ctx.fill();
+
+  // Center glow
+  const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, size * 0.5);
+  grad.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
+  grad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.arc(0, 0, size * 0.5, 0, Math.PI * 2);
   ctx.fill();
 }
 
