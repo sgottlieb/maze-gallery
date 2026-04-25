@@ -23,8 +23,8 @@ Each reading corresponds to one of the four 3-cards in the deck:
 - **Draw**: 2 cards with a re-shuffle between them
 - **Mechanic**: Draw one card, shuffle the deck again (7 real shuffles), draw a second card
 - **Result**: Compare card values:
-  - Card 1 < Card 2 → **Maybe** (½)
-  - Card 1 = Card 2 → **Yes!**
+  - Card 1 < Card 2 → **Yes**
+  - Card 1 = Card 2 → **YES!** (overwhelming yes — a rare match)
   - Card 1 > Card 2 → **No**
 - **Display**: Both cards shown, answer appears immediately after the second card is revealed
 

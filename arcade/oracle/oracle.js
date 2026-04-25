@@ -278,14 +278,14 @@ function showYesNoAnswer() {
   let answer, detail;
 
   if (card1.value < card2.value) {
-    answer = 'Maybe';
-    detail = `${card1.name} (${card1.value}) < ${card2.name} (${card2.value}) \u2014 the cards are uncertain`;
+    answer = 'Yes';
+    detail = `${card1.name} (${card1.value}) < ${card2.name} (${card2.value})`;
   } else if (card1.value === card2.value) {
-    answer = 'Yes!';
-    detail = `${card1.name} (${card1.value}) = ${card2.name} (${card2.value}) \u2014 a rare match`;
+    answer = 'YES!';
+    detail = `${card1.name} (${card1.value}) = ${card2.name} (${card2.value}) \u2014 a rare match!`;
   } else {
     answer = 'No';
-    detail = `${card1.name} (${card1.value}) > ${card2.name} (${card2.value}) \u2014 the cards say not now`;
+    detail = `${card1.name} (${card1.value}) > ${card2.name} (${card2.value})`;
   }
 
   const display = $('#answer-display');
