@@ -338,26 +338,32 @@ function sparkleLoop() {
   if (fogAlpha > 0.01) {
     sparkleCtx.save();
     const grad = sparkleCtx.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, width * 0.6);
-    grad.addColorStop(0, `rgba(232, 218, 239, ${fogAlpha * 0.12})`);
-    grad.addColorStop(0.5, `rgba(245, 208, 224, ${fogAlpha * 0.08})`);
-    grad.addColorStop(1, `rgba(255, 239, 213, ${fogAlpha * 0.03})`);
+    grad.addColorStop(0, `rgba(232, 218, 239, ${fogAlpha * 0.35})`);
+    grad.addColorStop(0.5, `rgba(245, 208, 224, ${fogAlpha * 0.2})`);
+    grad.addColorStop(1, `rgba(255, 239, 213, ${fogAlpha * 0.1})`);
     sparkleCtx.fillStyle = grad;
     sparkleCtx.fillRect(0, 0, width, height);
     sparkleCtx.restore();
   }
 
-  // Ambient sparkles: denser when fog is active
-  const spawnRate = sparkleFog ? 0.85 : 0.3;
-  if (Math.random() < spawnRate) {
-    sparkles.push(createSparkle(
-      Math.random() * width,
-      Math.random() * height,
-      false
-    ));
+  // Ambient sparkles
+  const spawnRate = sparkleFog ? 0.95 : 0.3;
+  for (let s = 0; s < 3; s++) {
+    if (Math.random() < spawnRate) {
+      sparkles.push(createSparkle(
+        Math.random() * width,
+        Math.random() * height,
+        false
+      ));
+    }
   }
-  // Extra fog sparkles: large, slow, very faint — like glitter suspended in mist
-  if (sparkleFog && Math.random() < 0.4) {
-    sparkles.push(createFogSparkle(Math.random() * width, Math.random() * height));
+  // Fog sparkles: large, slow glitter suspended in mist
+  if (sparkleFog) {
+    for (let s = 0; s < 2; s++) {
+      if (Math.random() < 0.7) {
+        sparkles.push(createFogSparkle(Math.random() * width, Math.random() * height));
+      }
+    }
   }
 
   for (let i = sparkles.length - 1; i >= 0; i--) {
@@ -410,13 +416,13 @@ function createFogSparkle(x, y) {
   return {
     x,
     y,
-    vx: Math.cos(angle) * (0.05 + Math.random() * 0.15),
-    vy: -0.1 - Math.random() * 0.2,
-    size: 3 + Math.random() * 5,
+    vx: Math.cos(angle) * (0.05 + Math.random() * 0.2),
+    vy: -0.15 - Math.random() * 0.3,
+    size: 4 + Math.random() * 8,
     life: 1,
-    maxAlpha: 0.3 + Math.random() * 0.2,
-    gravity: -0.002,
-    decay: 0.003 + Math.random() * 0.004,
+    maxAlpha: 0.5 + Math.random() * 0.3,
+    gravity: -0.003,
+    decay: 0.002 + Math.random() * 0.003,
     rotation: Math.random() * Math.PI * 2,
     spin: (Math.random() - 0.5) * 0.03,
     color: SPARKLE_COLORS[Math.floor(Math.random() * SPARKLE_COLORS.length)]
@@ -453,7 +459,7 @@ function getLocalPos(el) {
 }
 
 function burstAt(localX, localY) {
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 40; i++) {
     sparkles.push(createSparkle(localX, localY, true));
   }
 }
