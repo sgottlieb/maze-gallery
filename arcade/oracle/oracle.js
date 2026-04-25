@@ -307,6 +307,7 @@ let sparkles = [];
 let sparkleRAF = null;
 let sparkleFog = false;
 let fogAlpha = 0;
+const isMobile = window.matchMedia('(max-width: 700px)').matches;
 
 function initSparkle() {
   const canvas = $('#sparkle-canvas');
@@ -343,20 +344,21 @@ function sparkleLoop() {
     sparkleCtx.restore();
   }
 
-  // Small sparkles: lots of tiny glitter
-  for (let s = 0; s < 8; s++) {
+  const smallCount = isMobile ? 2 : 8;
+  const medCount = isMobile ? 1 : 5;
+  const fogCount = isMobile ? 1 : 3;
+
+  for (let s = 0; s < smallCount; s++) {
     if (Math.random() < 0.9) {
       sparkles.push(createSmallSparkle(Math.random() * width, Math.random() * height));
     }
   }
-  // Medium sparkles
-  for (let s = 0; s < 5; s++) {
+  for (let s = 0; s < medCount; s++) {
     if (Math.random() < 0.8) {
       sparkles.push(createSparkle(Math.random() * width, Math.random() * height, false));
     }
   }
-  // Large fog sparkles: slow, glowy
-  for (let s = 0; s < 3; s++) {
+  for (let s = 0; s < fogCount; s++) {
     if (Math.random() < 0.7) {
       sparkles.push(createFogSparkle(Math.random() * width, Math.random() * height));
     }
@@ -506,7 +508,8 @@ function getLocalPos(el) {
 }
 
 function burstAt(localX, localY) {
-  for (let i = 0; i < 40; i++) {
+  const count = isMobile ? 12 : 40;
+  for (let i = 0; i < count; i++) {
     sparkles.push(createSparkle(localX, localY, true));
   }
 }

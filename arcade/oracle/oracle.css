@@ -353,8 +353,24 @@
   z-index: 100;
 }
 
-/* ---- Mobile (rotated landscape) ---- */
+/* ---- Disable landscape rotation for oracle — stays portrait ---- */
 @media (max-width: 700px) and (orientation: portrait) {
+  .arcade-game {
+    transform: none;
+    width: 100%;
+    height: 100vh;
+    position: relative;
+    top: auto;
+    left: auto;
+    padding: 4px 8px;
+  }
+
+  :root {
+    --card-width: 70px;
+    --card-height: 98px;
+    --card-radius: 5px;
+  }
+
   #spread-picker {
     max-width: 90%;
     height: 50vh;
@@ -366,9 +382,10 @@
 
   #prompt-text { font-size: 0.95rem; max-width: 260px; }
 
-  #spread-area { gap: 10px; padding-top: 12px; }
+  #spread-area { gap: 8px; padding-top: 12px; }
 
   .card-label .position-name { font-size: 0.65rem; }
+  .card-label .position-desc { font-size: 0.55rem; }
   .card-label .card-name { font-size: 0.7rem; }
   .card-label .card-theme { font-size: 0.6rem; }
 
