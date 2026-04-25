@@ -640,8 +640,8 @@ function render() {
         const avail = tableauHeight - cardH;
         const total = faceUpCount * faceUpOffset + faceDownCount * faceDownOffset;
         const ratio = avail / total;
-        faceUpOffset = Math.max(5, Math.floor(faceUpOffset * ratio));
-        faceDownOffset = Math.max(1, Math.floor(faceDownOffset * ratio));
+        faceUpOffset = Math.max(10, Math.floor(faceUpOffset * ratio));
+        faceDownOffset = Math.max(2, Math.floor(faceDownOffset * ratio));
       }
     }
 
