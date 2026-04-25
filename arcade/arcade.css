@@ -142,6 +142,27 @@ body {
   }
 }
 
+/* ---- Shared controls bar ---- */
+#controls {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+  padding-bottom: 8px;
+}
+
+/* ---- Shared column pile ---- */
+.pile.column {
+  border: 2px dashed transparent;
+  flex: 1;
+  max-width: var(--card-width);
+}
+
+.pile.column:empty {
+  border-color: var(--pile-border);
+}
+
 /* ---- Shared button style ---- */
 .arcade-btn {
   border-radius: 20px;

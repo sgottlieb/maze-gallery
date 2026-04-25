@@ -3,16 +3,6 @@
    (Shared styles in ../arcade.css)
    ============================================================ */
 
-/* ---- Controls bar ---- */
-#controls {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 12px;
-  flex-shrink: 0;
-  padding-bottom: 8px;
-}
-
 #move-counter {
   margin-left: auto;
   color: #a07090;
@@ -81,17 +71,6 @@
   font-size: 2rem;
   color: rgba(90, 80, 65, 0.35);
   pointer-events: none;
-}
-
-/* ---- Column piles ---- */
-.pile.column {
-  border: 2px dashed transparent;
-  flex: 1;
-  max-width: var(--card-width);
-}
-
-.pile.column:empty {
-  border-color: var(--pile-border);
 }
 
 /* ---- Stock empty state ---- */

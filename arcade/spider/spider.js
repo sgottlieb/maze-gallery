@@ -228,12 +228,15 @@ function snapLastCard(pileSelector) {
 function findBestMove(card, sourceCol) {
   let sameSuitCol = -1;
   let diffSuitCol = -1;
+  let emptyCol = -1;
 
   for (let col = 0; col < 10; col++) {
     if (col === sourceCol) continue;
     if (!canMoveToColumn(card, col)) continue;
     const pile = state.tableau[col];
-    if (pile.length > 0) {
+    if (pile.length === 0) {
+      if (emptyCol === -1) emptyCol = col;
+    } else {
       const topCard = pile[pile.length - 1];
       if (topCard.suit === card.suit && sameSuitCol === -1) {
         sameSuitCol = col;
@@ -245,6 +248,7 @@ function findBestMove(card, sourceCol) {
 
   if (sameSuitCol !== -1) return sameSuitCol;
   if (diffSuitCol !== -1) return diffSuitCol;
+  if (emptyCol !== -1) return emptyCol;
   return -1;
 }
 
