@@ -28,6 +28,7 @@ const READINGS = {
     prompt: 'Think about an aspect of life where you wish to grow',
     cardCount: 3,
     positions: ['Trust', 'Delight', 'Excel'],
+    descriptions: ['build accountability in this aspect', 'bring motivation to this aspect', 'pursue mastery in this aspect'],
     suitColor: 'suit-green'
   }
 };
@@ -195,6 +196,7 @@ function dealCards() {
       </div>
       <div class="card-label">
         <div class="position-name">${positions[i]}</div>
+        ${currentReading.descriptions ? `<div class="position-desc">${currentReading.descriptions[i]}</div>` : ''}
         <div class="card-name hidden" data-reveal="${i}">${card.name}</div>
         <div class="card-theme hidden" data-reveal="${i}">${card.theme}</div>
       </div>
