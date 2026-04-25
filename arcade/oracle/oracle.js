@@ -381,7 +381,7 @@ function sparkleLoop() {
     sparkleCtx.save();
     sparkleCtx.translate(s.x, s.y);
     sparkleCtx.rotate(s.rotation);
-    sparkleCtx.globalAlpha = alpha * s.maxAlpha;
+    sparkleCtx.globalAlpha = alpha * s.maxAlpha * 0.5;
     drawSparkleShape(sparkleCtx, s.size, s.color, s.points);
     sparkleCtx.restore();
   }
