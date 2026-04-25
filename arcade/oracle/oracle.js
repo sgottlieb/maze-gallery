@@ -335,9 +335,9 @@ function sparkleLoop() {
   if (fogAlpha > 0.01) {
     sparkleCtx.save();
     const grad = sparkleCtx.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, width * 0.6);
-    grad.addColorStop(0, `rgba(242, 212, 221, ${fogAlpha * 0.3})`);
-    grad.addColorStop(0.5, `rgba(245, 240, 235, ${fogAlpha * 0.18})`);
-    grad.addColorStop(1, `rgba(212, 207, 201, ${fogAlpha * 0.08})`);
+    grad.addColorStop(0, `rgba(242, 212, 221, ${fogAlpha * 0.27})`);
+    grad.addColorStop(0.5, `rgba(245, 240, 235, ${fogAlpha * 0.16})`);
+    grad.addColorStop(1, `rgba(212, 207, 201, ${fogAlpha * 0.07})`);
     sparkleCtx.fillStyle = grad;
     sparkleCtx.fillRect(0, 0, width, height);
     sparkleCtx.restore();
@@ -378,7 +378,7 @@ function sparkleLoop() {
     sparkleCtx.save();
     sparkleCtx.translate(s.x, s.y);
     sparkleCtx.rotate(s.rotation);
-    sparkleCtx.globalAlpha = alpha * s.maxAlpha * 0.5;
+    sparkleCtx.globalAlpha = alpha * s.maxAlpha * 0.45;
     drawSparkleShape(sparkleCtx, s.size, s.color, s.points);
     sparkleCtx.restore();
   }
