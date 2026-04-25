@@ -389,7 +389,13 @@ function sparkleLoop() {
   sparkleRAF = requestAnimationFrame(sparkleLoop);
 }
 
-const SPARKLE_COLORS = ['#f2d4dd', '#e8c8d0', '#ffffff', '#f5f0eb', '#d4cfc9', '#b8b0a8', '#efe4dc', '#dfd5cd', '#f0e6e8', '#c8beb6'];
+const SPARKLE_COLORS = [
+  '#f2d4dd', '#e8c8d0', '#d4a0b8', '#c87098',
+  '#a04060', '#7a2040',
+  '#6b3a5c', '#8a4878',
+  '#ffffff', '#faf5f0', '#f5ede6', '#efe4dc', '#e8ddd4',
+  '#f0e6e8', '#f5d0e0', '#ecd5dc'
+];
 
 function createSparkle(x, y, isBurst) {
   const angle = Math.random() * Math.PI * 2;
