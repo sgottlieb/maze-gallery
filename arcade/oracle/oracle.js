@@ -394,7 +394,8 @@ const SPARKLE_COLORS = [
   '#a04060', '#7a2040',
   '#6b3a5c', '#8a4878',
   '#ffffff', '#faf5f0', '#f5ede6', '#efe4dc', '#e8ddd4',
-  '#f0e6e8', '#f5d0e0', '#ecd5dc'
+  '#f0e6e8', '#f5d0e0', '#ecd5dc',
+  '#d4a850', '#c49a38', '#e8c86a', '#f0d878'
 ];
 
 function createSparkle(x, y, isBurst) {
