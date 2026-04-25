@@ -308,6 +308,8 @@ function showComplete() {
 let sparkleCtx = null;
 let sparkles = [];
 let sparkleRAF = null;
+let sparkleFog = false;
+let fogAlpha = 0;
 
 function initSparkle() {
   const canvas = $('#sparkle-canvas');
@@ -329,12 +331,32 @@ function sparkleLoop() {
   const { width, height } = sparkleCtx.canvas;
   sparkleCtx.clearRect(0, 0, width, height);
 
-  if (Math.random() < 0.3) {
+  // Fog layer: soft glowing mist when in a reading
+  const targetFog = sparkleFog ? 1 : 0;
+  fogAlpha += (targetFog - fogAlpha) * 0.02;
+  if (fogAlpha > 0.01) {
+    sparkleCtx.save();
+    const grad = sparkleCtx.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, width * 0.6);
+    grad.addColorStop(0, `rgba(232, 218, 239, ${fogAlpha * 0.12})`);
+    grad.addColorStop(0.5, `rgba(245, 208, 224, ${fogAlpha * 0.08})`);
+    grad.addColorStop(1, `rgba(255, 239, 213, ${fogAlpha * 0.03})`);
+    sparkleCtx.fillStyle = grad;
+    sparkleCtx.fillRect(0, 0, width, height);
+    sparkleCtx.restore();
+  }
+
+  // Ambient sparkles: denser when fog is active
+  const spawnRate = sparkleFog ? 0.85 : 0.3;
+  if (Math.random() < spawnRate) {
     sparkles.push(createSparkle(
       Math.random() * width,
       Math.random() * height,
       false
     ));
+  }
+  // Extra fog sparkles: large, slow, very faint — like glitter suspended in mist
+  if (sparkleFog && Math.random() < 0.4) {
+    sparkles.push(createFogSparkle(Math.random() * width, Math.random() * height));
   }
 
   for (let i = sparkles.length - 1; i >= 0; i--) {
@@ -346,14 +368,14 @@ function sparkleLoop() {
     }
     s.x += s.vx;
     s.y += s.vy;
-    s.vy += 0.01;
+    s.vy += s.gravity;
     s.rotation += s.spin;
 
     const alpha = s.life;
     sparkleCtx.save();
     sparkleCtx.translate(s.x, s.y);
     sparkleCtx.rotate(s.rotation);
-    sparkleCtx.globalAlpha = alpha;
+    sparkleCtx.globalAlpha = alpha * s.maxAlpha;
     drawSparkleShape(sparkleCtx, s.size, s.color);
     sparkleCtx.restore();
   }
@@ -361,10 +383,11 @@ function sparkleLoop() {
   sparkleRAF = requestAnimationFrame(sparkleLoop);
 }
 
+const SPARKLE_COLORS = ['#f5d0e0', '#ffeaa7', '#dfe6e9', '#fab1a0', '#e8daef', '#ffefd5'];
+
 function createSparkle(x, y, isBurst) {
   const angle = Math.random() * Math.PI * 2;
   const speed = isBurst ? (1 + Math.random() * 3) : (0.1 + Math.random() * 0.3);
-  const colors = ['#f5d0e0', '#ffeaa7', '#dfe6e9', '#fab1a0', '#e8daef', '#ffefd5'];
   return {
     x,
     y,
@@ -372,10 +395,30 @@ function createSparkle(x, y, isBurst) {
     vy: Math.sin(angle) * speed - (isBurst ? 1 : 0),
     size: isBurst ? (2 + Math.random() * 4) : (1 + Math.random() * 2),
     life: 1,
+    maxAlpha: 1,
+    gravity: 0.01,
     decay: isBurst ? (0.015 + Math.random() * 0.02) : (0.005 + Math.random() * 0.008),
     rotation: Math.random() * Math.PI * 2,
     spin: (Math.random() - 0.5) * 0.1,
-    color: colors[Math.floor(Math.random() * colors.length)]
+    color: SPARKLE_COLORS[Math.floor(Math.random() * SPARKLE_COLORS.length)]
+  };
+}
+
+function createFogSparkle(x, y) {
+  const angle = Math.random() * Math.PI * 2;
+  return {
+    x,
+    y,
+    vx: Math.cos(angle) * (0.05 + Math.random() * 0.15),
+    vy: -0.1 - Math.random() * 0.2,
+    size: 3 + Math.random() * 5,
+    life: 1,
+    maxAlpha: 0.3 + Math.random() * 0.2,
+    gravity: -0.002,
+    decay: 0.003 + Math.random() * 0.004,
+    rotation: Math.random() * Math.PI * 2,
+    spin: (Math.random() - 0.5) * 0.03,
+    color: SPARKLE_COLORS[Math.floor(Math.random() * SPARKLE_COLORS.length)]
   };
 }
 
@@ -432,6 +475,8 @@ function init() {
       shuffleCount = 0;
       $('#reading-title').textContent = currentReading.title;
 
+      sparkleFog = true;
+
       if (currentReading.needsDayPicker) {
         transition(STATES.DAY_PICK);
       } else {
@@ -448,6 +493,7 @@ function init() {
 }
 
 function resetReading() {
+  sparkleFog = false;
   currentReading = null;
   drawnCards = [];
   revealIndex = 0;
