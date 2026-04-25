@@ -163,10 +163,10 @@ function render() {
   }
 
   // Tableau — dynamic overlap per column to fit available height
-  const tableauEl = $('#tableau');
-  const tableauRect = tableauEl.getBoundingClientRect();
-  const tableauHeight = tableauRect.height;
   const cardH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--card-height')) || 182;
+  const isRotated = window.matchMedia('(max-width: 700px) and (orientation: portrait)').matches;
+  const viewportConstraint = isRotated ? window.innerWidth : window.innerHeight;
+  const tableauHeight = viewportConstraint - $('#controls').offsetHeight - $('#top-row').offsetHeight - 32;
 
   for (let col = 0; col < 7; col++) {
     const colEl = $(`#tableau-${col}`);
@@ -176,22 +176,26 @@ function render() {
 
     let faceUpOffset = 36;
     let faceDownOffset = 8;
+    let firstFaceUpOffset = faceUpOffset;
 
     if (pile.length > 1 && tableauHeight > 0) {
       const faceUpCount = pile.filter(c => c.faceUp).length;
       const faceDownCount = pile.length - faceUpCount;
-      const needed = faceUpCount * faceUpOffset + faceDownCount * faceDownOffset + cardH;
+      const needed = firstFaceUpOffset + (faceUpCount - 1) * faceUpOffset + faceDownCount * faceDownOffset + cardH;
 
       if (needed > tableauHeight) {
         const avail = tableauHeight - cardH;
-        const total = faceUpCount * faceUpOffset + faceDownCount * faceDownOffset;
-        const ratio = avail / total;
-        faceUpOffset = Math.max(12, Math.floor(faceUpOffset * ratio));
-        faceDownOffset = Math.max(3, Math.floor(faceDownOffset * ratio));
+        firstFaceUpOffset = Math.min(faceUpOffset, Math.max(16, Math.floor(avail * 0.25)));
+        const remaining = avail - firstFaceUpOffset;
+        const restCount = (faceUpCount - 1) * faceUpOffset + faceDownCount * faceDownOffset;
+        const ratio = restCount > 0 ? remaining / restCount : 1;
+        faceUpOffset = Math.max(3, Math.floor(faceUpOffset * ratio));
+        faceDownOffset = Math.max(1, Math.floor(faceDownOffset * ratio));
       }
     }
 
     let topOffset = 0;
+    let seenFaceUp = false;
     for (let i = 0; i < pile.length; i++) {
       const card = pile[i];
       const selected = isCardSelected('tableau', col, i);
@@ -202,7 +206,12 @@ function render() {
       el.dataset.col = col;
       el.dataset.cardIndex = i;
       colEl.appendChild(el);
-      topOffset += card.faceUp ? faceUpOffset : faceDownOffset;
+      if (card.faceUp) {
+        topOffset += seenFaceUp ? faceUpOffset : firstFaceUpOffset;
+        seenFaceUp = true;
+      } else {
+        topOffset += faceDownOffset;
+      }
     }
   }
 }
