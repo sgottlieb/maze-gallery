@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Arcade — Sara Gottlieb</title>
+  <link rel="stylesheet" href="arcade.css" />
+  <style>
+    body {
+      overflow: auto;
+      touch-action: auto;
+      user-select: auto;
+    }
+
+    .arcade-landing {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .arcade-landing h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #4a3f35;
+      margin-bottom: 8px;
+    }
+
+    .arcade-landing .subtitle {
+      font-size: 1rem;
+      color: #a07090;
+      margin-bottom: 40px;
+    }
+
+    .game-grid {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+
+    .game-tile {
+      width: 200px;
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 16px;
+      padding: 32px 20px 24px;
+      text-align: center;
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .game-tile:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+
+    .game-tile .icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+
+    .game-tile .name {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #4a3f35;
+    }
+
+    .game-tile .desc {
+      font-size: 0.85rem;
+      color: #8a7a6a;
+      margin-top: 6px;
+    }
+
+    .game-tile.coming-soon {
+      background: rgba(255, 255, 255, 0.25);
+      border: 2px dashed rgba(180, 170, 158, 0.45);
+      cursor: default;
+      box-shadow: none;
+    }
+
+    .game-tile.coming-soon:hover {
+      transform: none;
+      box-shadow: none;
+    }
+
+    .game-tile.coming-soon .icon {
+      opacity: 0.3;
+    }
+
+    .game-tile.coming-soon .name {
+      color: #bbb;
+    }
+  </style>
+</head>
+<body>
+  <div class="arcade-landing">
+    <h1>Arcade</h1>
+    <p class="subtitle">Pick a game to play</p>
+    <div class="game-grid">
+      <a href="solitaire/" class="game-tile">
+        <div class="icon">♠♥</div>
+        <div class="name">Solitaire</div>
+        <div class="desc">Classic solitaire</div>
+      </a>
+      <a href="spider/" class="game-tile">
+        <div class="icon">🕷️</div>
+        <div class="name">Spider</div>
+        <div class="desc">Spider solitaire</div>
+      </a>
+      <div class="game-tile coming-soon">
+        <div class="icon">?</div>
+        <div class="name">Coming Soon</div>
+        <div class="desc"></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
