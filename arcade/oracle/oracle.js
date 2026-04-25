@@ -323,6 +323,7 @@ function initSparkle() {
   resize();
   window.addEventListener('resize', resize);
 
+  sparkleFog = true;
   sparkleLoop();
 }
 
@@ -475,8 +476,6 @@ function init() {
       shuffleCount = 0;
       $('#reading-title').textContent = currentReading.title;
 
-      sparkleFog = true;
-
       if (currentReading.needsDayPicker) {
         transition(STATES.DAY_PICK);
       } else {
@@ -493,7 +492,6 @@ function init() {
 }
 
 function resetReading() {
-  sparkleFog = false;
   currentReading = null;
   drawnCards = [];
   revealIndex = 0;
