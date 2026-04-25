@@ -20,3 +20,10 @@ scripts/dollz-src/
 
 # Duplicate retro texture folder (original sources live in art/retro/)
 retro-texture/
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+.env*
+!.env.example
