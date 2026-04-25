@@ -4,10 +4,11 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <title>Solitaire — Sara Gottlieb</title>
+  <link rel="stylesheet" href="../arcade.css" />
   <link rel="stylesheet" href="solitaire.css" />
 </head>
 <body>
-  <div id="game">
+  <div id="game" class="arcade-game">
     <header id="controls">
       <button id="new-game-btn">New Game</button>
       <div id="draw-toggle">
@@ -36,12 +37,20 @@
         <div id="tableau-6" class="pile column"></div>
       </div>
     </div>
+    <button id="auto-complete-btn" class="hidden">Auto Complete</button>
     <div id="win-overlay" class="hidden">
       <canvas id="win-canvas"></canvas>
       <div id="win-message">
         <h1>You Won!</h1>
         <button id="play-again-btn">Play Again</button>
       </div>
+    </div>
+  </div>
+  <div id="rotate-prompt">
+    <div id="rotate-message">
+      <span id="rotate-icon">↻</span>
+      <p>Rotate your device to landscape to play</p>
+      <button id="rotate-dismiss">Play anyway</button>
     </div>
   </div>
   <script type="module" src="solitaire.js"></script>

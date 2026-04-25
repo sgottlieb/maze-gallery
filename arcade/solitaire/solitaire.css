@@ -2,13 +2,13 @@
    Design tokens
    ============================================================ */
 :root {
-  --card-width: 100px;
-  --card-height: 140px;
+  --card-width: 130px;
+  --card-height: 182px;
   --card-gap: 12px;
   --card-radius: 8px;
-  --pile-border: rgba(180, 130, 160, 0.4);
-  --bg-top: #f5e6f0;
-  --bg-bottom: #f0d4e8;
+  --pile-border: rgba(180, 170, 158, 0.45);
+  --bg-top: #ede8e1;
+  --bg-bottom: #e5e0d8;
   --shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
 }
 
@@ -24,7 +24,11 @@
 body {
   height: 100vh;
   font-family: system-ui, -apple-system, sans-serif;
-  background: linear-gradient(160deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1024' height='1024'%3E%3Cdefs%3E%3Cfilter id='cloud'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.04' numOctaves='8' seed='5' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='0.45' intercept='0.4'/%3E%3CfeFuncG type='linear' slope='0.45' intercept='0.4'/%3E%3CfeFuncB type='linear' slope='0.45' intercept='0.4'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3C/defs%3E%3Crect width='1024' height='1024' filter='url(%23cloud)'/%3E%3C/svg%3E"),
+    linear-gradient(160deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
+  background-blend-mode: soft-light, normal;
+  background-size: 1024px 1024px, cover;
   overflow: hidden;
   user-select: none;
   touch-action: none;
@@ -37,7 +41,7 @@ body {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  max-width: 900px;
+  max-width: 1100px;
   margin: 0 auto;
   padding: 8px 12px;
   position: relative;
@@ -59,7 +63,7 @@ body {
   border-radius: 20px;
   border: none;
   background: rgba(255, 255, 255, 0.6);
-  color: #7a5070;
+  color: #4a3f35;
   font-size: 0.9rem;
   font-weight: 600;
   padding: 6px 16px;
@@ -85,7 +89,7 @@ body {
 #draw-toggle button {
   border: none;
   background: transparent;
-  color: #7a5070;
+  color: #4a3f35;
   font-size: 0.85rem;
   font-weight: 500;
   padding: 4px 14px;
@@ -139,7 +143,7 @@ body {
 #tableau {
   display: flex;
   flex-direction: row;
-  gap: var(--card-gap);
+  justify-content: space-between;
   flex: 1;
   align-items: flex-start;
 }
@@ -156,10 +160,30 @@ body {
   flex-shrink: 0;
 }
 
+.foundation {
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.foundation .card {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.foundation.drop-target {
+  border-color: #8a7560;
+  box-shadow: 0 0 12px rgba(138, 117, 96, 0.4);
+}
+
 .pile.column {
-  border: none;
+  border: 2px dashed transparent;
   flex: 1;
   max-width: var(--card-width);
+}
+
+.pile.column:empty {
+  border-color: var(--pile-border);
 }
 
 /* ============================================================
@@ -192,7 +216,7 @@ body {
   align-items: center;
   justify-content: center;
   font-size: 2rem;
-  color: rgba(180, 130, 160, 0.35);
+  color: rgba(90, 80, 65, 0.35);
   pointer-events: none;
 }
 
@@ -221,12 +245,20 @@ body {
   display: block;
 }
 
+.card.suit-pink {
+  border: 2.5px solid rgba(200, 80, 120, 0.5);
+}
+
+.card.suit-green {
+  border: 2.5px solid rgba(70, 140, 90, 0.5);
+}
+
 .card.face-down {
   cursor: default;
 }
 
 .card.selected {
-  box-shadow: 0 0 0 3px #c06090, var(--shadow);
+  box-shadow: 0 0 0 3px #8a7560, var(--shadow);
   transform: translateY(-4px);
 }
 
@@ -248,6 +280,45 @@ body {
 
 .card.flipping {
   animation: flip-card 0.3s ease;
+}
+
+.card.snap {
+  animation: snap 0.2s ease-out;
+}
+@keyframes snap {
+  0% { transform: scale(1.08); box-shadow: 0 6px 16px rgba(0,0,0,0.2); }
+  60% { transform: scale(0.97); }
+  100% { transform: scale(1); box-shadow: var(--shadow); }
+}
+
+/* ============================================================
+   Auto-complete button
+   ============================================================ */
+#auto-complete-btn {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1500;
+  border-radius: 24px;
+  border: none;
+  background: rgba(255, 255, 255, 0.85);
+  color: #4a3f35;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 10px 28px;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+#auto-complete-btn:hover {
+  background: rgba(255, 255, 255, 0.98);
+  transform: translateX(-50%) translateY(-2px);
+}
+
+#auto-complete-btn.hidden {
+  display: none;
 }
 
 /* ============================================================
@@ -284,7 +355,7 @@ body {
 
 #win-message h1 {
   font-size: 48px;
-  color: #7a5070;
+  color: #4a3f35;
   text-shadow: 0 2px 8px rgba(255, 255, 255, 0.9), 0 0 20px rgba(255, 255, 255, 0.7);
 }
 
@@ -292,7 +363,7 @@ body {
   border-radius: 20px;
   border: none;
   background: rgba(255, 255, 255, 0.75);
-  color: #7a5070;
+  color: #4a3f35;
   font-size: 1rem;
   font-weight: 600;
   padding: 10px 28px;
@@ -306,57 +377,107 @@ body {
 }
 
 /* ============================================================
-   Responsive — small screens (≤700px)
+   Rotate prompt — hidden, no longer needed
    ============================================================ */
-@media (max-width: 700px) {
+#rotate-prompt {
+  display: none;
+}
+
+/* ============================================================
+   Responsive — portrait narrow: rotate the entire game 90°
+   Uses viewport height as width, viewport width as height.
+   Cards stay the same readable size.
+   ============================================================ */
+@media (max-width: 700px) and (orientation: portrait) {
   :root {
-    --card-width: 48px;
-    --card-height: 67px;
-    --card-gap: 4px;
-    --card-radius: 4px;
+    --card-width: 80px;
+    --card-height: 112px;
+    --card-gap: 6px;
+    --card-radius: 6px;
+  }
+
+  #game {
+    transform: rotate(90deg);
+    transform-origin: top left;
+    width: 100vh;
+    height: 100vw;
+    position: absolute;
+    top: 0;
+    left: 100vw;
+    padding: 4px 8px;
+  }
+
+  #controls {
+    padding-bottom: 2px;
+    gap: 6px;
   }
 
   #new-game-btn {
-    font-size: 0.72rem;
-    padding: 4px 10px;
+    font-size: 0.78rem;
+    padding: 3px 10px;
   }
 
   #draw-toggle button {
-    font-size: 0.7rem;
-    padding: 3px 8px;
+    font-size: 0.75rem;
+    padding: 2px 8px;
   }
 
   #move-counter {
-    font-size: 0.7rem;
+    font-size: 0.75rem;
   }
 
-  #foundation-0::after,
-  #foundation-1::after,
-  #foundation-2::after,
-  #foundation-3::after,
+  #table {
+    gap: 4px;
+  }
+
+  .foundation::after,
   #stock:not(:has(.card))::after,
   #stock.empty::after {
-    font-size: 1.1rem;
-  }
-
-  #win-message h1 {
-    font-size: 28px;
-  }
-
-  #play-again-btn {
-    font-size: 0.85rem;
-    padding: 7px 18px;
+    font-size: 1.3rem;
   }
 }
 
 /* ============================================================
-   Responsive — medium screens (701px – 1000px)
+   Responsive — tablet / medium (701–1000px)
    ============================================================ */
 @media (min-width: 701px) and (max-width: 1000px) {
   :root {
-    --card-width: 80px;
-    --card-height: 112px;
+    --card-width: 85px;
+    --card-height: 119px;
     --card-gap: 8px;
     --card-radius: 6px;
+  }
+
+  #controls {
+    padding-bottom: 4px;
+    gap: 8px;
+  }
+
+  #new-game-btn {
+    font-size: 0.8rem;
+    padding: 4px 12px;
+  }
+
+  #draw-toggle button {
+    font-size: 0.78rem;
+    padding: 3px 10px;
+  }
+
+  #move-counter {
+    font-size: 0.78rem;
+  }
+
+  #table {
+    gap: 10px;
+  }
+
+  .foundation::after,
+  #stock:not(:has(.card))::after,
+  #stock.empty::after {
+    font-size: 1.4rem;
+  }
+
+  #win-message h1 {
+    font-size: 32px;
   }
 }
