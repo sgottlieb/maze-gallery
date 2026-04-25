@@ -145,7 +145,7 @@ function handleShuffleTap(e) {
   void deckEl.offsetWidth;
   deckEl.classList.add('shuffling');
 
-  burstAt(e.clientX, e.clientY);
+  burstAtElement(deckEl);
 
   if (shuffleCount >= 7) {
     deckEl.onclick = null;
@@ -241,8 +241,7 @@ function revealCard(index, cardEl) {
   cardEl.classList.remove('tappable');
   cardEl.onclick = null;
 
-  const rect = cardEl.getBoundingClientRect();
-  burstAt(rect.left + rect.width / 2, rect.top + rect.height / 2);
+  burstAtElement(cardEl);
 
   $$(`[data-reveal="${index}"]`).forEach(el => el.classList.remove('hidden'));
 
@@ -296,7 +295,7 @@ function showYesNoAnswer() {
   `;
   display.classList.remove('hidden');
 
-  burstAt(window.innerWidth / 2, window.innerHeight / 2);
+  burstAt(sparkleCtx.canvas.width / 2, sparkleCtx.canvas.height / 2);
 }
 
 function showComplete() {
@@ -396,15 +395,26 @@ function drawSparkleShape(ctx, size, color) {
   ctx.fill();
 }
 
-function burstAt(clientX, clientY) {
-  const canvas = $('#sparkle-canvas');
-  const rect = canvas.getBoundingClientRect();
-  const x = clientX - rect.left;
-  const y = clientY - rect.top;
-
-  for (let i = 0; i < 20; i++) {
-    sparkles.push(createSparkle(x, y, true));
+function getLocalPos(el) {
+  const gameEl = $('#game');
+  let x = 0, y = 0, cur = el;
+  while (cur && cur !== gameEl) {
+    x += cur.offsetLeft;
+    y += cur.offsetTop;
+    cur = cur.offsetParent;
   }
+  return { x, y };
+}
+
+function burstAt(localX, localY) {
+  for (let i = 0; i < 20; i++) {
+    sparkles.push(createSparkle(localX, localY, true));
+  }
+}
+
+function burstAtElement(el) {
+  const pos = getLocalPos(el);
+  burstAt(pos.x + el.offsetWidth / 2, pos.y + el.offsetHeight / 2);
 }
 
 function init() {
