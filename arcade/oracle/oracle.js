@@ -311,12 +311,11 @@ const isMobile = window.matchMedia('(max-width: 700px)').matches;
 
 function initSparkle() {
   const canvas = $('#sparkle-canvas');
-  const gameEl = $('#game');
   sparkleCtx = canvas.getContext('2d');
 
   function resize() {
-    canvas.width = gameEl.clientWidth;
-    canvas.height = gameEl.clientHeight;
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
   }
   resize();
   window.addEventListener('resize', resize);
@@ -496,27 +495,16 @@ function drawSparkleShape(ctx, size, color, points) {
   ctx.fill();
 }
 
-function getLocalPos(el) {
-  const gameEl = $('#game');
-  let x = 0, y = 0, cur = el;
-  while (cur && cur !== gameEl) {
-    x += cur.offsetLeft;
-    y += cur.offsetTop;
-    cur = cur.offsetParent;
-  }
-  return { x, y };
-}
-
-function burstAt(localX, localY) {
+function burstAt(x, y) {
   const count = isMobile ? 12 : 40;
   for (let i = 0; i < count; i++) {
-    sparkles.push(createSparkle(localX, localY, true));
+    sparkles.push(createSparkle(x, y, true));
   }
 }
 
 function burstAtElement(el) {
-  const pos = getLocalPos(el);
-  burstAt(pos.x + el.offsetWidth / 2, pos.y + el.offsetHeight / 2);
+  const rect = el.getBoundingClientRect();
+  burstAt(rect.left + rect.width / 2, rect.top + rect.height / 2);
 }
 
 function init() {
