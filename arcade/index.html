@@ -37,13 +37,15 @@
     .game-grid {
       display: flex;
       justify-content: center;
-      gap: 16px;
-      flex-wrap: wrap;
-      max-width: 440px;
+      gap: 12px;
+      flex-wrap: nowrap;
+      padding: 0 12px;
     }
 
     .game-tile {
       width: 200px;
+      min-width: 0;
+      flex-shrink: 1;
       background: rgba(255, 255, 255, 0.6);
       border-radius: 16px;
       padding: 32px 20px 24px;
@@ -75,6 +77,16 @@
       font-size: 0.85rem;
       color: #8a7a6a;
       margin-top: 6px;
+    }
+
+    @media (max-width: 500px) {
+      .game-tile {
+        padding: 20px 10px 16px;
+        border-radius: 12px;
+      }
+      .game-tile .icon { font-size: 32px; margin-bottom: 10px; }
+      .game-tile .name { font-size: 0.9rem; }
+      .game-tile .desc { font-size: 0.7rem; }
     }
 
   </style>
