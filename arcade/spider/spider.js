@@ -618,8 +618,7 @@ function render() {
 
   // Tableau
   const tableauEl = $('#tableau');
-  const tableauRect = tableauEl.getBoundingClientRect();
-  const tableauHeight = tableauRect.height;
+  const tableauHeight = tableauEl.clientHeight;
   const cardH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--card-height')) || 182;
 
   for (let col = 0; col < 10; col++) {
