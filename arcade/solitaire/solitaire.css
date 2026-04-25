@@ -1,55 +1,9 @@
 /* ============================================================
-   Design tokens
+   Solitaire-specific styles
+   (Shared styles in ../arcade.css)
    ============================================================ */
-:root {
-  --card-width: 130px;
-  --card-height: 182px;
-  --card-gap: 12px;
-  --card-radius: 8px;
-  --pile-border: rgba(180, 170, 158, 0.45);
-  --bg-top: #ede8e1;
-  --bg-bottom: #e5e0d8;
-  --shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
-}
 
-/* ============================================================
-   Base reset & body
-   ============================================================ */
-*, *::before, *::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  height: 100vh;
-  font-family: system-ui, -apple-system, sans-serif;
-  background:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1024' height='1024'%3E%3Cdefs%3E%3Cfilter id='cloud'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.04' numOctaves='8' seed='5' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='0.45' intercept='0.4'/%3E%3CfeFuncG type='linear' slope='0.45' intercept='0.4'/%3E%3CfeFuncB type='linear' slope='0.45' intercept='0.4'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3C/defs%3E%3Crect width='1024' height='1024' filter='url(%23cloud)'/%3E%3C/svg%3E"),
-    linear-gradient(160deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
-  background-blend-mode: soft-light, normal;
-  background-size: 1024px 1024px, cover;
-  overflow: hidden;
-  user-select: none;
-  touch-action: none;
-}
-
-/* ============================================================
-   #game — outer container
-   ============================================================ */
-#game {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 8px 12px;
-  position: relative;
-}
-
-/* ============================================================
-   #controls — header bar
-   ============================================================ */
+/* ---- Controls bar ---- */
 #controls {
   display: flex;
   flex-direction: row;
@@ -59,62 +13,13 @@ body {
   padding-bottom: 8px;
 }
 
-#new-game-btn {
-  border-radius: 20px;
-  border: none;
-  background: rgba(255, 255, 255, 0.6);
-  color: #4a3f35;
-  font-size: 0.9rem;
-  font-weight: 600;
-  padding: 6px 16px;
-  cursor: pointer;
-  transition: background 0.15s ease, transform 0.1s ease;
-}
-
-#new-game-btn:hover {
-  background: rgba(255, 255, 255, 0.85);
-  transform: translateY(-1px);
-}
-
-#draw-toggle {
-  display: flex;
-  flex-direction: row;
-  background: rgba(255, 255, 255, 0.35);
-  border-radius: 20px;
-  overflow: hidden;
-  padding: 2px;
-  gap: 2px;
-}
-
-#draw-toggle button {
-  border: none;
-  background: transparent;
-  color: #4a3f35;
-  font-size: 0.85rem;
-  font-weight: 500;
-  padding: 4px 14px;
-  border-radius: 18px;
-  cursor: pointer;
-  transition: background 0.15s ease;
-}
-
-#draw-toggle button.active {
-  background: rgba(210, 140, 180, 0.35);
-}
-
-#draw-toggle button:hover:not(.active) {
-  background: rgba(255, 255, 255, 0.5);
-}
-
 #move-counter {
   margin-left: auto;
   color: #a07090;
   font-size: 0.85rem;
 }
 
-/* ============================================================
-   #table — main play area
-   ============================================================ */
+/* ---- Table ---- */
 #table {
   display: flex;
   flex-direction: column;
@@ -123,9 +28,7 @@ body {
   min-height: 0;
 }
 
-/* ============================================================
-   #top-row — stock, waste, spacer, foundations
-   ============================================================ */
+/* ---- Top row ---- */
 #top-row {
   display: flex;
   flex-direction: row;
@@ -137,9 +40,7 @@ body {
   flex: 1;
 }
 
-/* ============================================================
-   #tableau — seven columns
-   ============================================================ */
+/* ---- Tableau ---- */
 #tableau {
   display: flex;
   flex-direction: row;
@@ -148,18 +49,7 @@ body {
   align-items: flex-start;
 }
 
-/* ============================================================
-   Piles — generic pile styling
-   ============================================================ */
-.pile {
-  position: relative;
-  width: var(--card-width);
-  min-height: var(--card-height);
-  border-radius: var(--card-radius);
-  border: 2px dashed var(--pile-border);
-  flex-shrink: 0;
-}
-
+/* ---- Foundation ---- */
 .foundation {
   transition: box-shadow 0.15s ease, border-color 0.15s ease;
 }
@@ -176,34 +66,7 @@ body {
   box-shadow: 0 0 12px rgba(138, 117, 96, 0.4);
 }
 
-.pile.column {
-  border: 2px dashed transparent;
-  flex: 1;
-  max-width: var(--card-width);
-}
-
-.pile.column:empty {
-  border-color: var(--pile-border);
-}
-
-/* ============================================================
-   Stock empty state — recycling arrow
-   ============================================================ */
-#stock:not(:has(.card))::after,
-#stock.empty::after {
-  content: "↻";
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2rem;
-  color: var(--pile-border);
-}
-
-/* ============================================================
-   Foundation suit indicators
-   ============================================================ */
+/* Foundation suit indicators */
 #foundation-0::after { content: "♥"; }
 #foundation-1::after { content: "♦"; }
 #foundation-2::after { content: "♣"; }
@@ -220,80 +83,31 @@ body {
   pointer-events: none;
 }
 
-/* ============================================================
-   Cards
-   ============================================================ */
-.card {
+/* ---- Column piles ---- */
+.pile.column {
+  border: 2px dashed transparent;
+  flex: 1;
+  max-width: var(--card-width);
+}
+
+.pile.column:empty {
+  border-color: var(--pile-border);
+}
+
+/* ---- Stock empty state ---- */
+#stock:not(:has(.card))::after,
+#stock.empty::after {
+  content: "↻";
   position: absolute;
-  width: var(--card-width);
-  height: var(--card-height);
-  border-radius: var(--card-radius);
-  box-shadow: var(--shadow);
-  cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-  will-change: transform;
-  overflow: hidden;
-  background: #fff;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: var(--pile-border);
 }
 
-.card img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: var(--card-radius);
-  pointer-events: none;
-  display: block;
-}
-
-.card.suit-pink {
-  border: 2.5px solid rgba(200, 80, 120, 0.5);
-}
-
-.card.suit-green {
-  border: 2.5px solid rgba(70, 140, 90, 0.5);
-}
-
-.card.face-down {
-  cursor: default;
-}
-
-.card.selected {
-  box-shadow: 0 0 0 3px #8a7560, var(--shadow);
-  transform: translateY(-4px);
-}
-
-.card.dragging {
-  z-index: 1000;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
-  transition: none;
-  pointer-events: none;
-}
-
-/* ============================================================
-   Flip animation
-   ============================================================ */
-@keyframes flip-card {
-  0%   { transform: scaleX(1); }
-  50%  { transform: scaleX(0); }
-  100% { transform: scaleX(1); }
-}
-
-.card.flipping {
-  animation: flip-card 0.3s ease;
-}
-
-.card.snap {
-  animation: snap 0.2s ease-out;
-}
-@keyframes snap {
-  0% { transform: scale(1.08); box-shadow: 0 6px 16px rgba(0,0,0,0.2); }
-  60% { transform: scale(0.97); }
-  100% { transform: scale(1); box-shadow: var(--shadow); }
-}
-
-/* ============================================================
-   Auto-complete button
-   ============================================================ */
+/* ---- Auto-complete button ---- */
 #auto-complete-btn {
   position: fixed;
   bottom: 24px;
@@ -321,44 +135,7 @@ body {
   display: none;
 }
 
-/* ============================================================
-   Win overlay
-   ============================================================ */
-#win-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 2000;
-}
-
-#win-overlay.hidden {
-  display: none;
-}
-
-#win-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
-#win-message {
-  position: absolute;
-  top: 40%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-}
-
-#win-message h1 {
-  font-size: 48px;
-  color: #4a3f35;
-  text-shadow: 0 2px 8px rgba(255, 255, 255, 0.9), 0 0 20px rgba(255, 255, 255, 0.7);
-}
-
+/* ---- Play again button ---- */
 #play-again-btn {
   border-radius: 20px;
   border: none;
@@ -376,58 +153,16 @@ body {
   transform: translateY(-1px);
 }
 
-/* ============================================================
-   Rotate prompt — hidden, no longer needed
-   ============================================================ */
+/* ---- Rotate prompt (hidden) ---- */
 #rotate-prompt {
   display: none;
 }
 
-/* ============================================================
-   Responsive — portrait narrow: rotate the entire game 90°
-   Uses viewport height as width, viewport width as height.
-   Cards stay the same readable size.
-   ============================================================ */
+/* ---- Mobile portrait adjustments ---- */
 @media (max-width: 700px) and (orientation: portrait) {
-  :root {
-    --card-width: 80px;
-    --card-height: 112px;
-    --card-gap: 6px;
-    --card-radius: 6px;
-  }
-
-  #game {
-    transform: rotate(90deg);
-    transform-origin: top left;
-    width: 100vh;
-    height: 100vw;
-    position: absolute;
-    top: 0;
-    left: 100vw;
-    padding: 4px 8px;
-  }
-
   #controls {
     padding-bottom: 2px;
     gap: 6px;
-  }
-
-  #new-game-btn {
-    font-size: 0.78rem;
-    padding: 3px 10px;
-  }
-
-  #draw-toggle button {
-    font-size: 0.75rem;
-    padding: 2px 8px;
-  }
-
-  #move-counter {
-    font-size: 0.75rem;
-  }
-
-  #table {
-    gap: 4px;
   }
 
   .foundation::after,
@@ -437,38 +172,11 @@ body {
   }
 }
 
-/* ============================================================
-   Responsive — tablet / medium (701–1000px)
-   ============================================================ */
+/* ---- Tablet adjustments ---- */
 @media (min-width: 701px) and (max-width: 1000px) {
-  :root {
-    --card-width: 85px;
-    --card-height: 119px;
-    --card-gap: 8px;
-    --card-radius: 6px;
-  }
-
   #controls {
     padding-bottom: 4px;
     gap: 8px;
-  }
-
-  #new-game-btn {
-    font-size: 0.8rem;
-    padding: 4px 12px;
-  }
-
-  #draw-toggle button {
-    font-size: 0.78rem;
-    padding: 3px 10px;
-  }
-
-  #move-counter {
-    font-size: 0.78rem;
-  }
-
-  #table {
-    gap: 10px;
   }
 
   .foundation::after,
