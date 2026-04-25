@@ -164,7 +164,8 @@ function render() {
 
   // Tableau — dynamic overlap per column to fit available height
   const tableauEl = $('#tableau');
-  const tableauHeight = tableauEl.clientHeight;
+  const tableauRect = tableauEl.getBoundingClientRect();
+  const tableauHeight = tableauRect.height;
   const cardH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--card-height')) || 182;
 
   for (let col = 0; col < 7; col++) {
