@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Oracle — Sara Gottlieb</title>
+  <link rel="stylesheet" href="../arcade.css" />
+  <link rel="stylesheet" href="oracle.css" />
+</head>
+<body>
+  <div id="game" class="arcade-game">
+    <header id="controls">
+      <a href="../" class="arcade-back">&larr; Arcade</a>
+      <span id="reading-title"></span>
+    </header>
+
+    <div id="table">
+      <!-- Spread picker: four corners + center deck -->
+      <div id="spread-picker">
+        <div class="spread-option" data-spread="love">
+          <span class="spread-suit suit-pink">&hearts;</span>
+          <span class="spread-name">Love</span>
+          <span class="spread-count">3 cards</span>
+        </div>
+        <div class="spread-option" data-spread="yesno">
+          <span class="spread-suit suit-pink">&diams;</span>
+          <span class="spread-name">Yes / No</span>
+          <span class="spread-count">2 cards</span>
+        </div>
+        <div id="center-deck"></div>
+        <div class="spread-option" data-spread="forecast">
+          <span class="spread-suit suit-green">&clubs;</span>
+          <span class="spread-name">Forecast</span>
+          <span class="spread-count">up to 7 cards</span>
+        </div>
+        <div class="spread-option" data-spread="growth">
+          <span class="spread-suit suit-green">&spades;</span>
+          <span class="spread-name">Growth</span>
+          <span class="spread-count">3 cards</span>
+        </div>
+      </div>
+
+      <!-- Prompt overlay (shown after picking spread) -->
+      <div id="prompt-area" class="hidden">
+        <p id="prompt-text"></p>
+        <div id="shuffle-deck"></div>
+        <p id="shuffle-counter"></p>
+      </div>
+
+      <!-- Forecast day picker -->
+      <div id="day-picker" class="hidden">
+        <p>How many days would you like to forecast?</p>
+        <div id="day-buttons"></div>
+      </div>
+
+      <!-- Card spread area -->
+      <div id="spread-area" class="hidden"></div>
+
+      <!-- Yes/No answer -->
+      <div id="answer-display" class="hidden"></div>
+
+      <!-- New Reading button -->
+      <div id="complete-area" class="hidden">
+        <button id="new-reading-btn" class="arcade-btn">New Reading</button>
+      </div>
+    </div>
+
+    <!-- Sparkle canvas overlay -->
+    <canvas id="sparkle-canvas"></canvas>
+  </div>
+  <script type="module" src="oracle.js"></script>
+</body>
+</html>

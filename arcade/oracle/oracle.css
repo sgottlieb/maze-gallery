@@ -1,0 +1,325 @@
+/* ---- Oracle layout ---- */
+#table {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.hidden { display: none !important; }
+
+/* ---- Spread picker: CSS grid, four corners + center ---- */
+#spread-picker {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  grid-template-rows: 1fr auto 1fr;
+  width: 100%;
+  max-width: 500px;
+  height: 60vh;
+  max-height: 400px;
+  gap: 8px;
+}
+
+.spread-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 12px;
+  border-radius: 12px;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.spread-option:hover {
+  background: rgba(255, 255, 255, 0.5);
+  transform: scale(1.05);
+}
+
+/* Position spread options in grid corners */
+.spread-option[data-spread="love"]     { grid-column: 1; grid-row: 1; }
+.spread-option[data-spread="yesno"]    { grid-column: 3; grid-row: 1; }
+.spread-option[data-spread="forecast"] { grid-column: 1; grid-row: 3; }
+.spread-option[data-spread="growth"]   { grid-column: 3; grid-row: 3; }
+
+#center-deck {
+  grid-column: 2;
+  grid-row: 2;
+  width: var(--card-width);
+  height: var(--card-height);
+  border-radius: var(--card-radius);
+  background-size: cover;
+  background-position: center;
+  box-shadow: var(--shadow);
+}
+
+.spread-suit {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.spread-suit.suit-pink { color: rgba(200, 80, 120, 0.8); }
+.spread-suit.suit-green { color: rgba(70, 140, 90, 0.8); }
+
+.spread-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #4a3f35;
+  margin-top: 6px;
+}
+
+.spread-count {
+  font-size: 0.75rem;
+  color: #8a7a6a;
+  margin-top: 2px;
+}
+
+/* ---- Reading title in controls ---- */
+#reading-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #8a6070;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* ---- Prompt area ---- */
+#prompt-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  flex: 1;
+}
+
+#prompt-text {
+  font-size: 1.1rem;
+  color: #4a3f35;
+  text-align: center;
+  max-width: 320px;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+#shuffle-deck {
+  width: var(--card-width);
+  height: var(--card-height);
+  border-radius: var(--card-radius);
+  background-size: cover;
+  background-position: center;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+#shuffle-deck:active {
+  transform: scale(0.95);
+}
+
+#shuffle-counter {
+  font-size: 0.85rem;
+  color: #8a7a6a;
+  font-weight: 500;
+}
+
+/* ---- Shuffle wave animation ---- */
+@keyframes shuffle-wave {
+  0%   { transform: rotate(0deg) translateY(0); }
+  25%  { transform: rotate(-3deg) translateY(-6px); }
+  50%  { transform: rotate(2deg) translateY(-3px); }
+  75%  { transform: rotate(-1deg) translateY(-1px); }
+  100% { transform: rotate(0deg) translateY(0); }
+}
+
+#shuffle-deck.shuffling {
+  animation: shuffle-wave 0.35s ease-out;
+}
+
+/* ---- Day picker (Forecast) ---- */
+#day-picker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+  justify-content: center;
+}
+
+#day-picker p {
+  font-size: 1rem;
+  color: #4a3f35;
+  font-style: italic;
+}
+
+#day-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+#day-buttons button {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid rgba(70, 140, 90, 0.4);
+  background: rgba(255, 255, 255, 0.5);
+  color: #4a3f35;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+#day-buttons button:hover {
+  background: rgba(70, 140, 90, 0.15);
+  transform: scale(1.1);
+}
+
+/* ---- Spread area ---- */
+#spread-area {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  justify-content: center;
+  flex: 1;
+  padding-top: 24px;
+}
+
+.oracle-card-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ---- Card flip container ---- */
+.oracle-card {
+  width: var(--card-width);
+  height: var(--card-height);
+  perspective: 600px;
+  cursor: default;
+}
+
+.oracle-card.tappable {
+  cursor: pointer;
+}
+
+.oracle-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.5s ease;
+  transform-style: preserve-3d;
+}
+
+.oracle-card.flipped .oracle-card-inner {
+  transform: rotateY(180deg);
+}
+
+.oracle-card-front,
+.oracle-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: var(--card-radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.oracle-card-back {
+  background-size: cover;
+  background-position: center;
+}
+
+.oracle-card-front {
+  transform: rotateY(180deg);
+}
+
+.oracle-card-front img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--card-radius);
+  display: block;
+}
+
+.oracle-card-front.suit-pink {
+  border: 2.5px solid rgba(200, 80, 120, 0.5);
+}
+
+.oracle-card-front.suit-green {
+  border: 2.5px solid rgba(70, 140, 90, 0.5);
+}
+
+/* ---- Card labels ---- */
+.card-label {
+  text-align: center;
+}
+
+.card-label .position-name {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #8a6070;
+}
+
+.card-label .card-name {
+  font-size: 0.8rem;
+  color: #4a3f35;
+  margin-top: 2px;
+}
+
+.card-label .card-theme {
+  font-size: 0.7rem;
+  color: #a07090;
+  font-style: italic;
+  margin-top: 1px;
+}
+
+/* ---- Deal animation ---- */
+@keyframes deal-in {
+  0%   { opacity: 0; transform: scale(0.5) translateY(-40px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.oracle-card-slot.dealing {
+  animation: deal-in 0.4s ease-out both;
+}
+
+/* ---- Answer display (Yes/No) ---- */
+#answer-display {
+  text-align: center;
+  padding: 16px;
+}
+
+#answer-display .answer-text {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #4a3f35;
+}
+
+#answer-display .answer-detail {
+  font-size: 0.9rem;
+  color: #8a7a6a;
+  margin-top: 4px;
+}
+
+/* ---- Complete area ---- */
+#complete-area {
+  padding: 20px;
+  text-align: center;
+}
+
+/* ---- Sparkle canvas ---- */
+#sparkle-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 100;
+}
