@@ -346,23 +346,22 @@ function sparkleLoop() {
     sparkleCtx.restore();
   }
 
-  // Ambient sparkles
-  const spawnRate = sparkleFog ? 0.95 : 0.3;
-  for (let s = 0; s < 3; s++) {
-    if (Math.random() < spawnRate) {
-      sparkles.push(createSparkle(
-        Math.random() * width,
-        Math.random() * height,
-        false
-      ));
+  // Small sparkles: lots of tiny glitter
+  for (let s = 0; s < 5; s++) {
+    if (Math.random() < 0.9) {
+      sparkles.push(createSmallSparkle(Math.random() * width, Math.random() * height));
     }
   }
-  // Fog sparkles: large, slow glitter suspended in mist
-  if (sparkleFog) {
-    for (let s = 0; s < 2; s++) {
-      if (Math.random() < 0.7) {
-        sparkles.push(createFogSparkle(Math.random() * width, Math.random() * height));
-      }
+  // Medium sparkles
+  for (let s = 0; s < 3; s++) {
+    if (Math.random() < 0.8) {
+      sparkles.push(createSparkle(Math.random() * width, Math.random() * height, false));
+    }
+  }
+  // Large fog sparkles: slow, glowy
+  for (let s = 0; s < 2; s++) {
+    if (Math.random() < 0.6) {
+      sparkles.push(createFogSparkle(Math.random() * width, Math.random() * height));
     }
   }
 
@@ -407,6 +406,24 @@ function createSparkle(x, y, isBurst) {
     decay: isBurst ? (0.015 + Math.random() * 0.02) : (0.005 + Math.random() * 0.008),
     rotation: Math.random() * Math.PI * 2,
     spin: (Math.random() - 0.5) * 0.1,
+    color: SPARKLE_COLORS[Math.floor(Math.random() * SPARKLE_COLORS.length)]
+  };
+}
+
+function createSmallSparkle(x, y) {
+  const angle = Math.random() * Math.PI * 2;
+  return {
+    x,
+    y,
+    vx: Math.cos(angle) * (0.05 + Math.random() * 0.2),
+    vy: Math.sin(angle) * (0.05 + Math.random() * 0.2),
+    size: 0.5 + Math.random() * 1.5,
+    life: 1,
+    maxAlpha: 0.6 + Math.random() * 0.4,
+    gravity: 0.005,
+    decay: 0.008 + Math.random() * 0.012,
+    rotation: Math.random() * Math.PI * 2,
+    spin: (Math.random() - 0.5) * 0.15,
     color: SPARKLE_COLORS[Math.floor(Math.random() * SPARKLE_COLORS.length)]
   };
 }
