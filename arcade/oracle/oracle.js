@@ -382,7 +382,7 @@ function sparkleLoop() {
     sparkleCtx.translate(s.x, s.y);
     sparkleCtx.rotate(s.rotation);
     sparkleCtx.globalAlpha = alpha * s.maxAlpha;
-    drawSparkleShape(sparkleCtx, s.size, s.color);
+    drawSparkleShape(sparkleCtx, s.size, s.color, s.points);
     sparkleCtx.restore();
   }
 
@@ -412,6 +412,7 @@ function createSparkle(x, y, isBurst) {
     decay: isBurst ? (0.015 + Math.random() * 0.02) : (0.005 + Math.random() * 0.008),
     rotation: Math.random() * Math.PI * 2,
     spin: (Math.random() - 0.5) * 0.1,
+    points: 4 + Math.floor(Math.random() * 4),
     color: SPARKLE_COLORS[Math.floor(Math.random() * SPARKLE_COLORS.length)]
   };
 }
@@ -431,6 +432,7 @@ function createSmallSparkle(x, y) {
     decay: 0.008 + Math.random() * 0.012,
     rotation: Math.random() * Math.PI * 2,
     spin: (Math.random() - 0.5) * 0.15,
+    points: 4 + Math.floor(Math.random() * 4),
     color: SPARKLE_COLORS[Math.floor(Math.random() * SPARKLE_COLORS.length)]
   };
 }
@@ -450,21 +452,22 @@ function createFogSparkle(x, y) {
     decay: 0.002 + Math.random() * 0.003,
     rotation: Math.random() * Math.PI * 2,
     spin: (Math.random() - 0.5) * 0.03,
+    points: 4 + Math.floor(Math.random() * 4),
     color: SPARKLE_COLORS[Math.floor(Math.random() * SPARKLE_COLORS.length)]
   };
 }
 
-function drawSparkleShape(ctx, size, color) {
-  // Sharp 7-pointed star
+function drawSparkleShape(ctx, size, color, points) {
   ctx.fillStyle = color;
   ctx.beginPath();
-  for (let i = 0; i < 7; i++) {
-    const a = (i / 7) * Math.PI * 2 - Math.PI / 2;
+  const inner = points <= 4 ? 0.15 : 0.2;
+  for (let i = 0; i < points; i++) {
+    const a = (i / points) * Math.PI * 2 - Math.PI / 2;
     const ax = Math.cos(a) * size;
     const ay = Math.sin(a) * size;
-    const b = ((i + 0.5) / 7) * Math.PI * 2 - Math.PI / 2;
-    const bx = Math.cos(b) * size * 0.2;
-    const by = Math.sin(b) * size * 0.2;
+    const b = ((i + 0.5) / points) * Math.PI * 2 - Math.PI / 2;
+    const bx = Math.cos(b) * size * inner;
+    const by = Math.sin(b) * size * inner;
     if (i === 0) ctx.moveTo(ax, ay);
     else ctx.lineTo(ax, ay);
     ctx.lineTo(bx, by);
@@ -472,7 +475,6 @@ function drawSparkleShape(ctx, size, color) {
   ctx.closePath();
   ctx.fill();
 
-  // Center glow
   const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, size * 0.5);
   grad.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
   grad.addColorStop(1, 'rgba(255, 255, 255, 0)');
