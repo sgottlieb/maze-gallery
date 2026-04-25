@@ -3,6 +3,12 @@
    (Shared styles in ../arcade.css)
    ============================================================ */
 
+/* 10 columns need smaller cards than 7-column solitaire */
+:root {
+  --card-width: 100px;
+  --card-height: 140px;
+}
+
 #move-counter,
 #score-counter {
   color: #a07090;
@@ -90,6 +96,11 @@
 
 /* ---- Mobile portrait adjustments ---- */
 @media (max-width: 700px) and (orientation: portrait) {
+  :root {
+    --card-width: 65px;
+    --card-height: 91px;
+  }
+
   #controls {
     padding-bottom: 2px;
     gap: 6px;
@@ -108,6 +119,11 @@
 
 /* ---- Tablet adjustments ---- */
 @media (min-width: 701px) and (max-width: 1000px) {
+  :root {
+    --card-width: 70px;
+    --card-height: 98px;
+  }
+
   #controls {
     padding-bottom: 4px;
     gap: 8px;
