@@ -347,20 +347,20 @@ function sparkleLoop() {
   }
 
   // Small sparkles: lots of tiny glitter
-  for (let s = 0; s < 5; s++) {
+  for (let s = 0; s < 8; s++) {
     if (Math.random() < 0.9) {
       sparkles.push(createSmallSparkle(Math.random() * width, Math.random() * height));
     }
   }
   // Medium sparkles
-  for (let s = 0; s < 3; s++) {
+  for (let s = 0; s < 5; s++) {
     if (Math.random() < 0.8) {
       sparkles.push(createSparkle(Math.random() * width, Math.random() * height, false));
     }
   }
   // Large fog sparkles: slow, glowy
-  for (let s = 0; s < 2; s++) {
-    if (Math.random() < 0.6) {
+  for (let s = 0; s < 3; s++) {
+    if (Math.random() < 0.7) {
       sparkles.push(createFogSparkle(Math.random() * width, Math.random() * height));
     }
   }
@@ -451,13 +451,13 @@ function createFogSparkle(x, y) {
 function drawSparkleShape(ctx, size, color) {
   ctx.fillStyle = color;
   ctx.beginPath();
-  for (let i = 0; i < 4; i++) {
-    const a = (i / 4) * Math.PI * 2 - Math.PI / 2;
+  for (let i = 0; i < 7; i++) {
+    const a = (i / 7) * Math.PI * 2 - Math.PI / 2;
     const ax = Math.cos(a) * size;
     const ay = Math.sin(a) * size;
-    const b = ((i + 0.5) / 4) * Math.PI * 2 - Math.PI / 2;
-    const bx = Math.cos(b) * size * 0.35;
-    const by = Math.sin(b) * size * 0.35;
+    const b = ((i + 0.5) / 7) * Math.PI * 2 - Math.PI / 2;
+    const bx = Math.cos(b) * size * 0.4;
+    const by = Math.sin(b) * size * 0.4;
     if (i === 0) ctx.moveTo(ax, ay);
     else ctx.lineTo(ax, ay);
     ctx.lineTo(bx, by);
