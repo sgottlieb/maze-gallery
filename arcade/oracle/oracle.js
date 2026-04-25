@@ -13,8 +13,7 @@ const READINGS = {
     prompt: 'Think of your question',
     cardCount: 2,
     positions: ['First Card', 'Second Card'],
-    suitColor: 'suit-pink',
-    twoPhase: true
+    suitColor: 'suit-pink'
   },
   forecast: {
     title: 'Forecasting Fortune',
@@ -40,8 +39,6 @@ const STATES = {
   SHUFFLING: 'SHUFFLING',
   DEALING: 'DEALING',
   REVEALING: 'REVEALING',
-  SHUFFLING_2: 'SHUFFLING_2',
-  DEALING_2: 'DEALING_2',
   COMPLETE: 'COMPLETE'
 };
 
@@ -79,7 +76,6 @@ function transition(newState) {
       showPrompt();
       break;
     case STATES.DEALING:
-    case STATES.DEALING_2:
       dealCards();
       break;
     case STATES.REVEALING:
@@ -151,39 +147,35 @@ function handleShuffleTap(e) {
   if (shuffleCount >= 7) {
     deckEl.onclick = null;
     setTimeout(() => {
-      if (state === STATES.SHUFFLING_2) {
-        transition(STATES.DEALING_2);
-      } else {
-        transition(STATES.DEALING);
-      }
+      transition(STATES.DEALING);
     }, 500);
   }
 }
 
 function dealCards() {
-  const isSecondPhase = state === STATES.DEALING_2;
-  const isFirstPhaseOfTwo = currentReading.twoPhase && !isSecondPhase;
-  const count = (isSecondPhase || isFirstPhaseOfTwo) ? 1 : currentReading.cardCount;
-  const startIndex = isSecondPhase ? drawnCards.length : 0;
+  const count = currentReading.cardCount;
 
-  for (let i = 0; i < count; i++) {
+  if (currentReading.key === 'yesno') {
     drawnCards.push(deck.pop());
+    for (let s = 0; s < 7; s++) deck = shuffle(deck);
+    drawnCards.push(deck.pop());
+  } else {
+    for (let i = 0; i < count; i++) {
+      drawnCards.push(deck.pop());
+    }
   }
 
   showSection('#spread-area');
   const area = $('#spread-area');
-
-  if (state !== STATES.DEALING_2) {
-    area.innerHTML = '';
-  }
+  area.innerHTML = '';
 
   const positions = currentReading.positions;
 
-  for (let i = startIndex; i < drawnCards.length; i++) {
+  for (let i = 0; i < drawnCards.length; i++) {
     const card = drawnCards[i];
     const slot = document.createElement('div');
     slot.className = 'oracle-card-slot dealing';
-    slot.style.animationDelay = `${(i - startIndex) * 0.15}s`;
+    slot.style.animationDelay = `${i * 0.15}s`;
 
     slot.innerHTML = `
       <div class="oracle-card" data-index="${i}">
@@ -238,26 +230,6 @@ function revealCard(index, cardEl) {
   $$(`[data-reveal="${index}"]`).forEach(el => el.classList.remove('hidden'));
 
   revealIndex++;
-
-  if (currentReading.twoPhase && revealIndex === 1) {
-    setTimeout(() => {
-      const btn = document.createElement('button');
-      btn.className = 'arcade-btn shuffle-again-btn';
-      btn.textContent = 'Shuffle Again';
-      btn.addEventListener('click', () => {
-        btn.remove();
-        shuffleCount = 0;
-        state = STATES.SHUFFLING_2;
-        showSection('#prompt-area');
-        $('#prompt-text').textContent = 'Shuffle for the second card';
-        $('#shuffle-deck').style.backgroundImage = `url('${BACK_IMAGE}')`;
-        updateShuffleCounter();
-        $('#shuffle-deck').onclick = handleShuffleTap;
-      });
-      $('#spread-area').appendChild(btn);
-    }, 800);
-    return;
-  }
 
   if (revealIndex >= drawnCards.length) {
     setTimeout(() => {
