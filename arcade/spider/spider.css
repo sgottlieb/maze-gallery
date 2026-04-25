@@ -1,0 +1,135 @@
+/* ============================================================
+   Spider Solitaire — game-specific styles
+   (Shared styles in ../arcade.css)
+   ============================================================ */
+
+/* 10 columns need smaller cards than 7-column solitaire */
+:root {
+  --card-width: 100px;
+  --card-height: 140px;
+}
+
+#move-counter,
+#score-counter {
+  color: #a07090;
+  font-size: 0.85rem;
+}
+
+#move-counter {
+  margin-left: auto;
+}
+
+#score-counter {
+  margin-left: 12px;
+}
+
+/* ---- Table ---- */
+#table {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 12px;
+  min-height: 0;
+}
+
+/* ---- Tableau — 10 columns ---- */
+#tableau {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  flex: 1;
+  align-items: flex-start;
+}
+
+/* ---- Bottom row — stock & completed ---- */
+#bottom-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--card-gap);
+  flex-shrink: 0;
+}
+
+#bottom-row .spacer {
+  flex: 1;
+}
+
+#stock {
+  cursor: pointer;
+}
+
+#stock:not(:has(.card))::after,
+#stock.empty::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: var(--pile-border);
+}
+
+#stock-count,
+#completed-count {
+  font-size: 0.85rem;
+  color: #8a7a6a;
+}
+
+#completed .card {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* ---- Play again button ---- */
+#play-again-btn {
+  font-size: 1rem;
+  padding: 10px 28px;
+}
+
+#win-score {
+  font-size: 1.2rem;
+  color: #4a3f35;
+}
+
+/* ---- Mobile portrait adjustments ---- */
+@media (max-width: 700px) and (orientation: portrait) {
+  :root {
+    --card-width: 65px;
+    --card-height: 91px;
+  }
+
+  #controls {
+    padding-bottom: 2px;
+    gap: 6px;
+  }
+
+  #stock:not(:has(.card))::after,
+  #stock.empty::after {
+    font-size: 1rem;
+  }
+
+  #stock-count,
+  #completed-count {
+    font-size: 0.75rem;
+  }
+}
+
+/* ---- Tablet adjustments ---- */
+@media (min-width: 701px) and (max-width: 1000px) {
+  :root {
+    --card-width: 70px;
+    --card-height: 98px;
+  }
+
+  #controls {
+    padding-bottom: 4px;
+    gap: 8px;
+  }
+
+  #win-message h1 {
+    font-size: 32px;
+  }
+}

@@ -1,0 +1,262 @@
+/* ============================================================
+   Shared Arcade Styles
+   ============================================================ */
+
+/* ---- Design tokens ---- */
+:root {
+  --card-width: 130px;
+  --card-height: 182px;
+  --card-gap: 12px;
+  --card-radius: 8px;
+  --pile-border: rgba(180, 170, 158, 0.45);
+  --bg-top: #ede8e1;
+  --bg-bottom: #e5e0d8;
+  --shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+/* ---- Base reset & body ---- */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  height: 100vh;
+  font-family: system-ui, -apple-system, sans-serif;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1024' height='1024'%3E%3Cdefs%3E%3Cfilter id='cloud'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.04' numOctaves='8' seed='5' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='0.45' intercept='0.4'/%3E%3CfeFuncG type='linear' slope='0.45' intercept='0.4'/%3E%3CfeFuncB type='linear' slope='0.45' intercept='0.4'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3C/defs%3E%3Crect width='1024' height='1024' filter='url(%23cloud)'/%3E%3C/svg%3E"),
+    linear-gradient(160deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
+  background-blend-mode: soft-light, normal;
+  background-size: 1024px 1024px, cover;
+  overflow: hidden;
+  user-select: none;
+  touch-action: none;
+}
+
+/* ---- Cards ---- */
+.card {
+  position: absolute;
+  width: var(--card-width);
+  height: var(--card-height);
+  border-radius: var(--card-radius);
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  will-change: transform;
+  overflow: hidden;
+  background: #fff;
+}
+
+.card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--card-radius);
+  pointer-events: none;
+  display: block;
+}
+
+.card.suit-pink {
+  border: 2.5px solid rgba(200, 80, 120, 0.5);
+}
+
+.card.suit-green {
+  border: 2.5px solid rgba(70, 140, 90, 0.5);
+}
+
+.card.face-down {
+  cursor: default;
+}
+
+.card.selected {
+  box-shadow: 0 0 0 3px #8a7560, var(--shadow);
+  transform: translateY(-4px);
+}
+
+.card.dragging {
+  z-index: 1000;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
+  transition: none;
+  pointer-events: none;
+}
+
+@keyframes snap {
+  0% { transform: scale(1.08); box-shadow: 0 6px 16px rgba(0,0,0,0.2); }
+  60% { transform: scale(0.97); }
+  100% { transform: scale(1); box-shadow: var(--shadow); }
+}
+
+.card.snap {
+  animation: snap 0.2s ease-out;
+}
+
+/* ---- Piles ---- */
+.pile {
+  position: relative;
+  width: var(--card-width);
+  min-height: var(--card-height);
+  border-radius: var(--card-radius);
+  border: 2px dashed var(--pile-border);
+  flex-shrink: 0;
+}
+
+/* ---- Arcade game container & mobile rotation ---- */
+.arcade-game {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 8px 12px;
+  position: relative;
+}
+
+@media (max-width: 700px) and (orientation: portrait) {
+  :root {
+    --card-width: 80px;
+    --card-height: 112px;
+    --card-gap: 6px;
+    --card-radius: 6px;
+  }
+
+  .arcade-game {
+    transform: rotate(90deg);
+    transform-origin: top left;
+    width: 100vh;
+    height: 100vw;
+    position: absolute;
+    top: 0;
+    left: 100vw;
+    padding: 4px 8px;
+  }
+}
+
+/* ---- Tablet responsive ---- */
+@media (min-width: 701px) and (max-width: 1000px) {
+  :root {
+    --card-width: 85px;
+    --card-height: 119px;
+    --card-gap: 8px;
+    --card-radius: 6px;
+  }
+}
+
+/* ---- Arcade back link ---- */
+.arcade-back {
+  text-decoration: none;
+  color: #8a7a6a;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: color 0.15s ease;
+}
+
+.arcade-back:hover {
+  color: #4a3f35;
+}
+
+/* ---- Shared controls bar ---- */
+#controls {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+  padding-bottom: 8px;
+}
+
+/* ---- Shared column pile ---- */
+.pile.column {
+  border: 2px dashed transparent;
+  flex: 1;
+  max-width: var(--card-width);
+}
+
+.pile.column:empty {
+  border-color: var(--pile-border);
+}
+
+/* ---- Shared button style ---- */
+.arcade-btn {
+  border-radius: 20px;
+  border: none;
+  background: rgba(255, 255, 255, 0.6);
+  color: #4a3f35;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 6px 16px;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.arcade-btn:hover {
+  background: rgba(255, 255, 255, 0.85);
+  transform: translateY(-1px);
+}
+
+/* ---- Shared toggle style ---- */
+.arcade-toggle {
+  display: flex;
+  flex-direction: row;
+  background: rgba(255, 255, 255, 0.35);
+  border-radius: 20px;
+  overflow: hidden;
+  padding: 2px;
+  gap: 2px;
+}
+
+.arcade-toggle button {
+  border: none;
+  background: transparent;
+  color: #4a3f35;
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 4px 14px;
+  border-radius: 18px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.arcade-toggle button.active {
+  background: rgba(210, 140, 180, 0.35);
+}
+
+.arcade-toggle button:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* ---- Win overlay ---- */
+#win-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+}
+
+#win-overlay.hidden {
+  display: none;
+}
+
+#win-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#win-message {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+#win-message h1 {
+  font-size: 48px;
+  color: #4a3f35;
+  text-shadow: 0 2px 8px rgba(255, 255, 255, 0.9), 0 0 20px rgba(255, 255, 255, 0.7);
+}
