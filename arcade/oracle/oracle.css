@@ -315,6 +315,11 @@
   margin-top: 4px;
 }
 
+/* ---- Shuffle Again button (Yes/No between cards) ---- */
+.shuffle-again-btn {
+  margin-top: 20px;
+}
+
 /* ---- Complete area ---- */
 #complete-area {
   padding: 20px;

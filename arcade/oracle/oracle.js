@@ -212,16 +212,6 @@ function dealCards() {
 
 function enableReveal() {
   if (revealIndex >= drawnCards.length) {
-    if (currentReading.twoPhase && revealIndex === 1) {
-      shuffleCount = 0;
-      transition(STATES.SHUFFLING_2);
-      showSection('#prompt-area');
-      $('#prompt-text').textContent = 'Shuffle again for the second card';
-      $('#shuffle-deck').style.backgroundImage = `url('${BACK_IMAGE}')`;
-      updateShuffleCounter();
-      $('#shuffle-deck').onclick = handleShuffleTap;
-      return;
-    }
     transition(STATES.COMPLETE);
     return;
   }
@@ -251,14 +241,21 @@ function revealCard(index, cardEl) {
 
   if (currentReading.twoPhase && revealIndex === 1) {
     setTimeout(() => {
-      shuffleCount = 0;
-      state = STATES.SHUFFLING_2;
-      showSection('#prompt-area');
-      $('#prompt-text').textContent = 'Shuffle again for the second card';
-      $('#shuffle-deck').style.backgroundImage = `url('${BACK_IMAGE}')`;
-      updateShuffleCounter();
-      $('#shuffle-deck').onclick = handleShuffleTap;
-    }, 600);
+      const btn = document.createElement('button');
+      btn.className = 'arcade-btn shuffle-again-btn';
+      btn.textContent = 'Shuffle Again';
+      btn.addEventListener('click', () => {
+        btn.remove();
+        shuffleCount = 0;
+        state = STATES.SHUFFLING_2;
+        showSection('#prompt-area');
+        $('#prompt-text').textContent = 'Shuffle for the second card';
+        $('#shuffle-deck').style.backgroundImage = `url('${BACK_IMAGE}')`;
+        updateShuffleCounter();
+        $('#shuffle-deck').onclick = handleShuffleTap;
+      });
+      $('#spread-area').appendChild(btn);
+    }, 800);
     return;
   }
 
