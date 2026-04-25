@@ -459,9 +459,20 @@ function createFogSparkle(x, y) {
 }
 
 function drawSparkleShape(ctx, size, color, points) {
+  // Outer glow halo
+  const glow = ctx.createRadialGradient(0, 0, 0, 0, 0, size * 1.8);
+  glow.addColorStop(0, color);
+  glow.addColorStop(0.4, color + '66');
+  glow.addColorStop(1, color + '00');
+  ctx.fillStyle = glow;
+  ctx.beginPath();
+  ctx.arc(0, 0, size * 1.8, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Star shape
   ctx.fillStyle = color;
   ctx.beginPath();
-  const inner = points <= 4 ? 0.15 : 0.2;
+  const inner = points <= 4 ? 0.2 : 0.25;
   for (let i = 0; i < points; i++) {
     const a = (i / points) * Math.PI * 2 - Math.PI / 2;
     const ax = Math.cos(a) * size;
@@ -476,12 +487,13 @@ function drawSparkleShape(ctx, size, color, points) {
   ctx.closePath();
   ctx.fill();
 
-  const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, size * 0.5);
-  grad.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
-  grad.addColorStop(1, 'rgba(255, 255, 255, 0)');
-  ctx.fillStyle = grad;
+  // Bright center
+  const center = ctx.createRadialGradient(0, 0, 0, 0, 0, size * 0.4);
+  center.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
+  center.addColorStop(1, 'rgba(255, 255, 255, 0)');
+  ctx.fillStyle = center;
   ctx.beginPath();
-  ctx.arc(0, 0, size * 0.5, 0, Math.PI * 2);
+  ctx.arc(0, 0, size * 0.4, 0, Math.PI * 2);
   ctx.fill();
 }
 
