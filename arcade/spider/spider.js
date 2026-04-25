@@ -618,7 +618,11 @@ function render() {
 
   // Tableau
   const tableauEl = $('#tableau');
-  const tableauHeight = tableauEl.clientHeight;
+  const isRotated = window.matchMedia('(max-width: 700px) and (orientation: portrait)').matches;
+  const gameHeight = isRotated ? window.innerWidth : window.innerHeight;
+  const tableauTop = tableauEl.getBoundingClientRect().top;
+  const gameTop = document.getElementById('game').getBoundingClientRect().top;
+  const tableauHeight = gameHeight - (tableauTop - gameTop);
   const cardH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--card-height')) || 182;
 
   for (let col = 0; col < 10; col++) {
@@ -636,11 +640,15 @@ function render() {
       const needed = faceUpCount * faceUpOffset + faceDownCount * faceDownOffset + cardH;
 
       if (needed > tableauHeight) {
-        const avail = tableauHeight - cardH;
-        const total = faceUpCount * faceUpOffset + faceDownCount * faceDownOffset;
-        const ratio = avail / total;
-        faceUpOffset = Math.max(5, Math.floor(faceUpOffset * ratio));
-        faceDownOffset = Math.max(1, Math.floor(faceDownOffset * ratio));
+        const avail = Math.max(0, tableauHeight - cardH);
+        const weighted = faceUpCount * 4 + faceDownCount;
+        if (weighted > 0) {
+          const unit = avail / weighted;
+          faceDownOffset = Math.floor(unit);
+          faceUpOffset = Math.floor(unit * 4);
+        }
+        if (faceUpOffset < 1) faceUpOffset = 1;
+        if (faceDownOffset < 1) faceDownOffset = 0;
       }
     }
 
