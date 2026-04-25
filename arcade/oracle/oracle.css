@@ -56,31 +56,37 @@
 }
 
 .spread-suit {
+  font-family: Georgia, 'Times New Roman', serif;
   font-size: 2rem;
   line-height: 1;
 }
 
-.spread-suit.suit-pink { color: rgba(200, 80, 120, 0.8); text-shadow: 0 0 12px rgba(200, 80, 120, 0.5); }
-.spread-suit.suit-green { color: rgba(70, 140, 90, 0.8); text-shadow: 0 0 12px rgba(70, 140, 90, 0.5); }
+.spread-suit.suit-pink { color: #C4908A; text-shadow: 0 0 12px rgba(196, 144, 138, 0.5); }
+.spread-suit.suit-green { color: #8A9A7A; text-shadow: 0 0 12px rgba(138, 154, 122, 0.5); }
 
 .spread-name {
+  font-family: Georgia, 'Times New Roman', serif;
   font-size: 0.95rem;
-  font-weight: 600;
-  color: #4a3f35;
+  font-weight: 400;
+  color: #3A352F;
   margin-top: 6px;
 }
 
 .spread-count {
-  font-size: 0.75rem;
-  color: #8a7a6a;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 0.65rem;
+  color: #6B5F52;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
   margin-top: 2px;
 }
 
 /* ---- Reading title in controls ---- */
 #reading-title {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #8a6070;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #9A7B8A;
   letter-spacing: 1px;
   text-transform: uppercase;
   text-shadow: 0 0 12px rgba(200, 112, 152, 0.4);
@@ -97,12 +103,13 @@
 }
 
 #prompt-text {
+  font-family: Georgia, 'Times New Roman', serif;
   font-size: 1.1rem;
-  color: #4a3f35;
+  color: #3A352F;
   text-align: center;
   max-width: 320px;
   font-style: italic;
-  line-height: 1.5;
+  line-height: 1.6;
   text-shadow: 0 0 12px rgba(200, 112, 152, 0.25);
 }
 
@@ -122,9 +129,11 @@
 }
 
 #shuffle-counter {
-  font-size: 0.85rem;
-  color: #8a7a6a;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 0.75rem;
+  color: #6B5F52;
   font-weight: 500;
+  letter-spacing: 0.3px;
   text-shadow: 0 0 8px rgba(200, 112, 152, 0.2);
 }
 
@@ -152,8 +161,9 @@
 }
 
 #day-picker p {
+  font-family: Georgia, 'Times New Roman', serif;
   font-size: 1rem;
-  color: #4a3f35;
+  color: #3A352F;
   font-style: italic;
 }
 
@@ -168,9 +178,9 @@
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  border: 2px solid rgba(70, 140, 90, 0.4);
+  border: 1px solid rgba(0, 0, 0, 0.06);
   background: rgba(255, 255, 255, 0.5);
-  color: #4a3f35;
+  color: #3A352F;
   font-size: 1.1rem;
   font-weight: 600;
   cursor: pointer;
@@ -178,7 +188,7 @@
 }
 
 #day-buttons button:hover {
-  background: rgba(70, 140, 90, 0.15);
+  background: rgba(138, 154, 122, 0.2);
   transform: scale(1.1);
 }
 
@@ -273,31 +283,38 @@
 }
 
 .card-label .position-name {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #8a6070;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 500;
+  color: #9A7B8A;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
   text-shadow: 0 0 8px rgba(200, 112, 152, 0.3);
 }
 
 .card-label .position-desc {
-  font-size: 0.65rem;
-  color: #a07090;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 0.6rem;
+  color: #6B5F52;
   font-style: italic;
   margin-top: 1px;
   text-shadow: 0 0 6px rgba(200, 112, 152, 0.2);
 }
 
 .card-label .card-name {
+  font-family: Georgia, 'Times New Roman', serif;
   font-size: 0.8rem;
-  color: #4a3f35;
+  color: #3A352F;
   margin-top: 2px;
   text-shadow: 0 0 10px rgba(200, 112, 152, 0.25);
 }
 
 .card-label .card-theme {
-  font-size: 0.7rem;
-  color: #a07090;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 0.6rem;
+  color: #9A7B8A;
   font-style: italic;
+  letter-spacing: 0.3px;
   margin-top: 1px;
   text-shadow: 0 0 8px rgba(200, 112, 152, 0.2);
 }
@@ -319,15 +336,18 @@
 }
 
 #answer-display .answer-text {
+  font-family: Georgia, 'Times New Roman', serif;
   font-size: 2rem;
-  font-weight: 700;
-  color: #4a3f35;
+  font-weight: 400;
+  color: #3A352F;
   text-shadow: 0 0 20px rgba(200, 112, 152, 0.5), 0 0 40px rgba(200, 112, 152, 0.2);
 }
 
 #answer-display .answer-detail {
-  font-size: 0.9rem;
-  color: #8a7a6a;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 0.8rem;
+  color: #6B5F52;
+  letter-spacing: 0.3px;
   margin-top: 4px;
   text-shadow: 0 0 10px rgba(200, 112, 152, 0.25);
 }
