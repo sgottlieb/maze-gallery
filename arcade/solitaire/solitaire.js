@@ -721,16 +721,15 @@ function checkWin() {
   overlay.classList.remove('hidden');
 
   const canvas = $('#win-canvas');
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  const gameEl = document.querySelector('.arcade-game');
+  canvas.width = gameEl.clientWidth;
+  canvas.height = gameEl.clientHeight;
   const ctx = canvas.getContext('2d');
 
-  // Classic Windows solitaire waterfall
-  // One card at a time, arcing from its foundation, bouncing across
-  // the bottom leaving a trail of copies behind — no canvas clearing
-  const cardW = 120;
-  const cardH = 168;
-  const gravity = 0.15;
+  const scale = Math.min(1, canvas.width / 900);
+  const cardW = Math.round(120 * scale);
+  const cardH = Math.round(168 * scale);
+  const gravity = 0.15 * scale;
 
   const imgCache = {};
   for (const pile of state.foundations) {
@@ -741,10 +740,16 @@ function checkWin() {
     }
   }
 
-  const foundationEls = [0, 1, 2, 3].map(i => $(`#foundation-${i}`).getBoundingClientRect());
+  function getLocalPos(el) {
+    let x = 0, y = 0, cur = el;
+    while (cur && cur !== gameEl) {
+      x += cur.offsetLeft;
+      y += cur.offsetTop;
+      cur = cur.offsetParent;
+    }
+    return { x, y };
+  }
 
-  // By rank: all 4 Kings, then all 4 Queens, down to Aces.
-  // Each card launches from its own foundation with a unique arc.
   const sequence = [];
   const suitBaseDir = [1, -1, 1, -1];
 
@@ -753,12 +758,13 @@ function checkWin() {
       const pile = state.foundations[fi];
       const card = pile.find(c => c.value === value);
       if (!card) continue;
-      const rect = foundationEls[fi];
-      const startX = rect.left + rect.width / 2 - cardW / 2;
-      const startY = rect.top;
+      const fEl = $(`#foundation-${fi}`);
+      const pos = getLocalPos(fEl);
+      const startX = pos.x + fEl.offsetWidth / 2 - cardW / 2;
+      const startY = pos.y;
       const dir = suitBaseDir[fi];
-      const speed = 2 + Math.random() * 4;
-      const loft = -(1.5 + Math.random() * 5);
+      const speed = (2 + Math.random() * 4) * scale;
+      const loft = -(1.5 + Math.random() * 5) * scale;
       sequence.push({
         card,
         x: startX,
