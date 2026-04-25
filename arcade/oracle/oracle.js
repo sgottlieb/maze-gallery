@@ -160,8 +160,10 @@ function handleShuffleTap(e) {
 }
 
 function dealCards() {
-  const count = (state === STATES.DEALING_2) ? 1 : currentReading.cardCount;
-  const startIndex = (state === STATES.DEALING_2) ? 1 : 0;
+  const isSecondPhase = state === STATES.DEALING_2;
+  const isFirstPhaseOfTwo = currentReading.twoPhase && !isSecondPhase;
+  const count = (isSecondPhase || isFirstPhaseOfTwo) ? 1 : currentReading.cardCount;
+  const startIndex = isSecondPhase ? drawnCards.length : 0;
 
   for (let i = 0; i < count; i++) {
     drawnCards.push(deck.pop());
