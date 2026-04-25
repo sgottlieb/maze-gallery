@@ -196,8 +196,9 @@ function checkWin() {
     scoreEl.textContent = `Score: ${Math.max(0, state.score)}`;
 
     const canvas = $('#win-canvas');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    const gameEl = document.querySelector('.arcade-game');
+    canvas.width = gameEl.clientWidth;
+    canvas.height = gameEl.clientHeight;
     waterfallAnimation(canvas);
   }
 }
@@ -492,9 +493,10 @@ function endDrag(e) {
 // ============================================================
 function waterfallAnimation(canvas) {
   const ctx = canvas.getContext('2d');
-  const cardW = 120;
-  const cardH = 168;
-  const gravity = 0.15;
+  const scale = Math.min(1, canvas.width / 900);
+  const cardW = Math.round(120 * scale);
+  const cardH = Math.round(168 * scale);
+  const gravity = 0.15 * scale;
 
   const imgCache = {};
   for (const seq of state.completed) {
@@ -516,8 +518,8 @@ function waterfallAnimation(canvas) {
       const startX = canvas.width / 2 - cardW / 2;
       const startY = 0;
       const dir = dirPattern[si % dirPattern.length];
-      const speed = 2 + Math.random() * 4;
-      const loft = -(1.5 + Math.random() * 5);
+      const speed = (2 + Math.random() * 4) * scale;
+      const loft = -(1.5 + Math.random() * 5) * scale;
       sequence.push({ card, x: startX, y: startY, vx: dir * speed, vy: loft });
     }
   }
