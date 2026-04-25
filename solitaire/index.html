@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Solitaire — Sara Gottlieb</title>
+  <link rel="stylesheet" href="solitaire.css" />
+</head>
+<body>
+  <div id="game">
+    <header id="controls">
+      <button id="new-game-btn">New Game</button>
+      <div id="draw-toggle">
+        <button id="draw1-btn" class="active">Draw 1</button>
+        <button id="draw3-btn">Draw 3</button>
+      </div>
+      <span id="move-counter">Moves: 0</span>
+    </header>
+    <div id="table">
+      <div id="top-row">
+        <div id="stock" class="pile"></div>
+        <div id="waste" class="pile"></div>
+        <div class="spacer"></div>
+        <div id="foundation-0" class="pile foundation"></div>
+        <div id="foundation-1" class="pile foundation"></div>
+        <div id="foundation-2" class="pile foundation"></div>
+        <div id="foundation-3" class="pile foundation"></div>
+      </div>
+      <div id="tableau">
+        <div id="tableau-0" class="pile column"></div>
+        <div id="tableau-1" class="pile column"></div>
+        <div id="tableau-2" class="pile column"></div>
+        <div id="tableau-3" class="pile column"></div>
+        <div id="tableau-4" class="pile column"></div>
+        <div id="tableau-5" class="pile column"></div>
+        <div id="tableau-6" class="pile column"></div>
+      </div>
+    </div>
+    <div id="win-overlay" class="hidden">
+      <canvas id="win-canvas"></canvas>
+      <div id="win-message">
+        <h1>You Won!</h1>
+        <button id="play-again-btn">Play Again</button>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="solitaire.js"></script>
+</body>
+</html>
